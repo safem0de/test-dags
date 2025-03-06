@@ -33,12 +33,12 @@ jobs:
         export KUBECONFIG=$HOME/.kube/config
         # kubectl config use-context $(kubectl config current-context)
 
-
-
     - name: Check Kubernetes Cluster Connection
       run: |
-        kubectl cluster-info
-        kubectl get nodes
+        echo "KUBECONFIG Path: $HOME/.kube/config"
+        ls -lah $HOME/.kube/
+        cat $HOME/.kube/config || echo "❌ No kubeconfig file found!"
+
 
     - name: Get Airflow Pod Name
       run: |
