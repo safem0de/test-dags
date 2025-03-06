@@ -42,9 +42,9 @@ jobs:
 
     - name: Get Airflow Pod Name
       run: |
-        POD_NAME=$(kubectl get pod -n apache-airflow-test -l app=airflow -o jsonpath="{.items[0].metadata.name}")
+        POD=$(kubectl get pod -n apache-airflow-test -l app=airflow -o jsonpath="{.items[0].metadata.name}")
         echo "📌 Found Airflow Pod: $POD_NAME"
-        echo "POD_NAME=$POD_NAME" >> $GITHUB_ENV
+        echo "POD_NAME=$POD" >> $GITHUB_ENV
 
     - name: Ensure DAGs Directory Exists
       run: |
