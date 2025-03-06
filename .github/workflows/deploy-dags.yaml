@@ -31,7 +31,7 @@ jobs:
         echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
         chmod 600 $HOME/.kube/config
         export KUBECONFIG=$HOME/.kube/config
-        kubectl config use-context $(kubectl config current-context)
+        # kubectl config use-context $(kubectl config current-context)
 
 
 
