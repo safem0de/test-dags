@@ -19,12 +19,21 @@ jobs:
       with:
         version: "latest"
 
+    # - name: Authenticate with Kubernetes
+    #   run: |
+    #     echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
+    #     export KUBECONFIG=kubeconfig.yaml
+    #     kubectl version --client
+    #     kubectl cluster-info
     - name: Authenticate with Kubernetes
       run: |
-        echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
-        export KUBECONFIG=kubeconfig.yaml
-        kubectl version --client
+        echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
+        export KUBECONFIG=$HOME/.kube/config
+
+    - name: Check Kubernetes Cluster Connection
+      run: |
         kubectl cluster-info
+        kubectl get nodes
 
     - name: Get Airflow Pod Name
       run: |
