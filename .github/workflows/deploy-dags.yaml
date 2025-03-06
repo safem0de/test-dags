@@ -1,0 +1,33 @@
+name: Deploy DAGs to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "dags/**"  # ทำงานเมื่อไฟล์ในโฟลเดอร์ dags มีการเปลี่ยนแปลง
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Setup Kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: "latest"
+
+    - name: Authenticate with Kubernetes
+      run: |
+        echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
+        export KUBECONFIG=kubeconfig.yaml
+
+    - name: Get Airflow Pod Name
+      run: |
+        echo "POD_NAME=$(kubectl get pod -n apache-airflow-test -l app=airflow -o jsonpath='{.items[0].metadata.name}')" >> $GITHUB_ENV
+
+    - name: Copy DAGs to Kubernetes
+      run: |
+        kubectl cp dags/. apache-airflow-test/$POD_NAME:/opt/airflow/dags -c airflow-webserver

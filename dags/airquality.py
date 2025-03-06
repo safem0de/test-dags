@@ -13,12 +13,12 @@ DAG_FILE_NAME = "/opt/airflow/dags/data.json"
 
 def _get_airquality_data():
     API_KEY = Variable.get("air_quality_key")
-    print(f"API Key: {API_KEY[:5]}******{API_KEY[:-5]}")
+    print(f"API Key: {API_KEY[:3]}******{API_KEY[-3:]}")
 
 with DAG(
     "airquality_api_dag",
     schedule="*/10 * * * *",
-    start_date=timezone.datetime(2025, 3, 1),
+    start_date=timezone.datetime(2025, 3, 6),
     tags=["capstone"]
 ):
     start = EmptyOperator(task_id="start")
