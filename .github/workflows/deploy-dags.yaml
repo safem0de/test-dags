@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "dags/**"  # ทำงานเมื่อไฟล์ในโฟลเดอร์ dags มีการเปลี่ยนแปลง
+      - "dags/**"  # ทำงานเมื่อมีการเปลี่ยนแปลงในโฟลเดอร์ dags
 
 jobs:
   deploy:
@@ -23,11 +23,25 @@ jobs:
       run: |
         echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
         export KUBECONFIG=kubeconfig.yaml
+        kubectl version --client
+        kubectl cluster-info
 
     - name: Get Airflow Pod Name
       run: |
-        echo "POD_NAME=$(kubectl get pod -n apache-airflow-test -l app=airflow -o jsonpath='{.items[0].metadata.name}')" >> $GITHUB_ENV
+        POD_NAME=$(kubectl get pod -n apache-airflow-test -l app=airflow -o jsonpath="{.items[0].metadata.name}")
+        echo "📌 Found Airflow Pod: $POD_NAME"
+        echo "POD_NAME=$POD_NAME" >> $GITHUB_ENV
+
+    - name: Ensure DAGs Directory Exists
+      run: |
+        kubectl exec -n apache-airflow-test $POD_NAME -c airflow-webserver -- mkdir -p /opt/airflow/dags
 
     - name: Copy DAGs to Kubernetes
       run: |
+        echo "📂 Copying DAGs to /opt/airflow/dags in Pod: $POD_NAME"
         kubectl cp dags/. apache-airflow-test/$POD_NAME:/opt/airflow/dags -c airflow-webserver
+
+    - name: Verify DAGs in Kubernetes
+      run: |
+        echo "✅ Checking DAGs inside Airflow Pod"
+        kubectl exec -n apache-airflow-test $POD_NAME -c airflow-webserver -- ls -al /opt/airflow/dags
