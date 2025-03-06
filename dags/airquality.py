@@ -13,7 +13,7 @@ DAG_FILE_NAME = "/opt/airflow/dags/data.json"
 
 def _get_airquality_data():
     API_KEY = Variable.get("air_quality_key")
-    print(f"API Key: {API_KEY}")
+    print(f"API Key: {API_KEY[:5]}******{API_KEY[:-5]}")
 
 with DAG(
     "airquality_api_dag",
