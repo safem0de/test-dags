@@ -19,12 +19,6 @@ jobs:
       with:
         version: "latest"
 
-    # - name: Authenticate with Kubernetes
-    #   run: |
-    #     echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
-    #     export KUBECONFIG=kubeconfig.yaml
-    #     kubectl version --client
-    #     kubectl cluster-info
     - name: Authenticate with Kubernetes
       run: |
         mkdir -p $HOME/.kube/
@@ -32,11 +26,13 @@ jobs:
         chmod 600 $HOME/.kube/config
         export KUBECONFIG=$HOME/.kube/config
 
-        # แก้ค่า `server` ให้เป็น IP จริงของคลัสเตอร์
-        kubectl config set-cluster $(kubectl config current-context) --server=https://192.168.127.2:6443
-        
-        # ตรวจสอบว่าการเชื่อมต่อ Kubernetes ใช้งานได้
-        kubectl cluster-info
+        # ตรวจสอบว่า context ถูกต้อง
+        kubectl config get-contexts
+        kubectl config use-context $(kubectl config current-context) || echo "❌ No context found!"
+
+        # ตรวจสอบว่า Kubernetes เชื่อมต่อได้
+        kubectl cluster-info || echo "❌ Cannot connect to Kubernetes cluster!"
+
 
     - name: Check Kubernetes Cluster Connection
       run: |
