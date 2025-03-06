@@ -27,8 +27,11 @@ jobs:
     #     kubectl cluster-info
     - name: Authenticate with Kubernetes
       run: |
+        mkdir -p $HOME/.kube/
         echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
+        chmod 600 $HOME/.kube/config
         export KUBECONFIG=$HOME/.kube/config
+
 
     - name: Check Kubernetes Cluster Connection
       run: |
