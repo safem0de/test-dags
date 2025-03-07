@@ -19,7 +19,7 @@ with DAG(
     "airquality_api_dag",
     schedule="*/10 * * * *",
     start_date=timezone.datetime(2025, 3, 6),
-    tags=["capstone","symbolink"]
+    tags=["capstone","zzz"]
 ):
     start = EmptyOperator(task_id="start")
 
