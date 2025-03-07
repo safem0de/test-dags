@@ -6,7 +6,7 @@ with DAG(
     "my_first_dag",
     start_date = timezone.datetime(2025,2,1),
     schedule=None,
-    tags=["dpu","hello","longdoo"],
+    tags=["dpu","hello","longdoo2"],
 ):
     t1 = EmptyOperator(task_id="t1")
     t2 = EmptyOperator(task_id="t2")
