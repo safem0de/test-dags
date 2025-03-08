@@ -1,7 +1,7 @@
 import json
 import requests
 import os
-# from datetime import datetime, timedelta
+from ratelimit import limits, sleep_and_retry
 
 from airflow.models import Variable
 from airflow import DAG
@@ -15,6 +15,8 @@ CONN_STR = "0_postgres_db"
 
 API_URL = Variable.get("air_quality_url")
 API_KEY = Variable.get("air_quality_key")
+
+state_file_name = "state_master.json"
 
 ## function
 
@@ -76,6 +78,21 @@ def check_conn_string(conn_id: str):
         return False
     
 
+@sleep_and_retry
+@limits(calls=5, period=60)  # จำกัด 5 ครั้ง/นาที
+def fetch_api(url,params=None):
+    """
+    Fetch AQI data with optional query parameters.
+    """
+    try:
+        response = requests.get(url, params=params)  # ✅ Support dynamic parameters
+        response.raise_for_status()  # Raise error for bad responses (4xx, 5xx)
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"❌ API Request failed: {e}")
+        return None
+    
+
 ## Pipeline method
 #### database
 
@@ -101,7 +118,7 @@ def _create_aqi_database():
 
 def _create_aqi_table_location():
     sql_statement = """
-        CREATE TABLE IF NOT EXISTS public.location (
+        CREATE TABLE IF NOT EXISTS location (
             location_id SERIAL PRIMARY KEY,
             city VARCHAR(255) NOT NULL,
             state VARCHAR(255) NOT NULL,
@@ -111,7 +128,40 @@ def _create_aqi_table_location():
             UNIQUE (city, state, country)
         );
     """
-    execute_sql("aqi_database", sql_statement)
+    execute_sql(database_name="aqi_database", sql_statement=sql_statement)
+
+
+def _create_aqi_table_aqi_data():
+    sql_statement = """
+        CREATE TABLE IF NOT EXISTS aqi_data (
+            aqi_id SERIAL PRIMARY KEY,
+            location_id INT,
+            timestamp DATETIME NOT NULL,
+            aqius INT NOT NULL, 
+            mainus VARCHAR(10),
+            aqicn INT,
+            maincn VARCHAR(10),
+            FOREIGN KEY (location_id) REFERENCES location(location_id) ON DELETE CASCADE
+        );
+    """
+    execute_sql(database_name="aqi_database", sql_statement=sql_statement)
+
+
+def _create_aqi_table_weather_data():
+    sql_statement = """
+        CREATE TABLE IF NOT EXISTS weather_data (
+            weather_id SERIAL PRIMARY KEY,
+            location_id INT,
+            timestamp DATETIME NOT NULL,
+            temperature DECIMAL(5,2),
+            pressure INT,
+            humidity INT,
+            wind_speed DECIMAL(5,2),
+            wind_direction INT,
+            FOREIGN KEY (location_id) REFERENCES location(location_id) ON DELETE CASCADE
+        );
+    """
+    execute_sql(database_name="aqi_database", sql_statement=sql_statement)
 
 
 #### api
@@ -121,25 +171,70 @@ def _init_airquality_data():
 
 
 def _get_state_data():
-    # {{urlExternalAPI}}v2/states?country={{COUNTRY_NAME}}&key={{YOUR_API_KEY}}
+    """
+    Fetch state data from API only if the file does not exist.
+    """
+    file_name = state_file_name
+    file_path = os.path.join(DAG_FILE_PATH, file_name)
+
+    # ✅ If file exists, do nothing
+    if os.path.exists(file_path):
+        print(f"✅ File '{file_path}' already exists. Skipping API call.")
+        return
+    
     payload = {
         "country": "thailand",
         "key": API_KEY
     }
 
-    url = f"{API_URL}v2/states"
-    response = requests.get(url, params=payload)
-    print(response.url)
+    # {{urlExternalAPI}}v2/states?country={{COUNTRY_NAME}}&key={{YOUR_API_KEY}}
 
-    data = response.json()
+    url = f"{API_URL}v2/states"
+    # response = requests.get(url, params=payload)
+    # print(response.url)
+    # data = response.json()
+    
+    data = fetch_api(url,payload)
     print(data)
 
-    create_file_if_not_exist(DAG_FILE_PATH,"location_master.json",data)
+    create_file_if_not_exist(DAG_FILE_PATH, file_name, data)
 
+
+def _get_city_data():
+    with open(state_file_name, "r") as f:
+        data = json.load(f)
+
+    ## 
+
+    file_name = f"city_master_{""}.json"
+    file_path = os.path.join(DAG_FILE_PATH, file_name)
+
+    # ✅ If file exists, do nothing
+    if os.path.exists(file_path):
+        print(f"✅ File '{file_path}' already exists. Skipping API call.")
+        return
+
+    payload = {
+        "state": f"{""}",
+        "country": "thailand",
+        "key": API_KEY
+    }
+    
+    #{{urlExternalAPI}}v2/city?city=Bang Bon&state=bangkok&country=thailand&key={{YOUR_API_KEY}}
+
+    url = f"{API_URL}v2/cities"
+    # response = requests.get(url, params=payload)
+    # print(response.url)
+    # data = response.json()
+
+    data = fetch_api(url,payload)
+    print(data)
+
+    create_file_if_not_exist(DAG_FILE_PATH, file_name, data)
 
 with DAG(
     "airquality_database",
-    schedule="*/5 * * * *",
+    schedule=None,
     start_date=timezone.datetime(2025, 3, 6),
     tags=["capstone","database"]
 ):
@@ -155,6 +250,16 @@ with DAG(
         python_callable=_create_aqi_table_location,
     )
 
+    create_aqi_table_aqi_data = PythonOperator(
+        task_id="create_aqi_table_aqi_data",
+        python_callable=_create_aqi_table_aqi_data,
+    )
+
+    create_aqi_table_weather_data = PythonOperator(
+        task_id="create_aqi_table_weather_data",
+        python_callable=_create_aqi_table_weather_data,
+    )
+
     init_airquality_data = PythonOperator(
         task_id="init_airquality_data",
         python_callable=_init_airquality_data,
@@ -167,5 +272,5 @@ with DAG(
 
     end = EmptyOperator(task_id="end")
 
-    start >> create_aqi_database >> create_aqi_table_location >> end
+    start >> create_aqi_database >> create_aqi_table_location >> create_aqi_table_aqi_data >> create_aqi_table_weather_data >> end
     start >> init_airquality_data >> get_state_data >> end
