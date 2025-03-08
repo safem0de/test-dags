@@ -56,7 +56,7 @@ def _create_aqi_database():
         CREATE DATABASE IF NOT EXISTS aqi_database;
         )
     """
-    sql_command("aqi_database", sql_statement)
+    sql_command("postgres", sql_statement)
 
 
 def _create_aqi_table_location():
