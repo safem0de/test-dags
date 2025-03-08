@@ -89,7 +89,7 @@ def _create_aqi_database():
 
 def _create_aqi_table_location():
     sql_statement = """
-        CREATE TABLE IF NOT EXISTS location (
+        CREATE TABLE IF NOT EXISTS aqi_database.location (
             location_id SERIAL PRIMARY KEY,
             city VARCHAR(255) NOT NULL,
             state VARCHAR(255) NOT NULL,
@@ -154,4 +154,5 @@ with DAG(
 
     end = EmptyOperator(task_id="end")
 
-    start >> create_aqi_database >> create_aqi_table_location >> init_airquality_data >> get_state_data >> end
+    start >> create_aqi_database >> create_aqi_table_location >> end
+    start >> init_airquality_data >> get_state_data >> end
