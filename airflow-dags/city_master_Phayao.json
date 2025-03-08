@@ -1,0 +1,20 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Tom"
+        },
+        {
+            "city": "Chiang Muan"
+        },
+        {
+            "city": "Mae Ka"
+        },
+        {
+            "city": "Mueang"
+        },
+        {
+            "city": "Pong"
+        }
+    ]
+}

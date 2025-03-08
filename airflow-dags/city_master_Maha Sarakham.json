@@ -1,0 +1,14 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Borabue"
+        },
+        {
+            "city": "Maha Sarakham"
+        },
+        {
+            "city": "Phayakkhaphum Phisai"
+        }
+    ]
+}

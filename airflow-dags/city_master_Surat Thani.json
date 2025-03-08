@@ -1,0 +1,20 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Tai"
+        },
+        {
+            "city": "Bo Put"
+        },
+        {
+            "city": "Ko Pha-ngan"
+        },
+        {
+            "city": "Ko Samui"
+        },
+        {
+            "city": "Surat Thani"
+        }
+    ]
+}

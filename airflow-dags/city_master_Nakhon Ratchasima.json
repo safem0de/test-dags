@@ -1,0 +1,23 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Bua Lai"
+        },
+        {
+            "city": "Mu Si"
+        },
+        {
+            "city": "Mueang"
+        },
+        {
+            "city": "Nai Mueang"
+        },
+        {
+            "city": "Nakhon Ratchasima"
+        },
+        {
+            "city": "Pak Chong"
+        }
+    ]
+}

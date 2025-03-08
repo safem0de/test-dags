@@ -1,0 +1,20 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Chom Phra"
+        },
+        {
+            "city": "Prasat"
+        },
+        {
+            "city": "Si Khoraphum"
+        },
+        {
+            "city": "Surin"
+        },
+        {
+            "city": "Tha Tum"
+        }
+    ]
+}

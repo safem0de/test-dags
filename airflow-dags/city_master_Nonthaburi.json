@@ -1,0 +1,35 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Mai"
+        },
+        {
+            "city": "Bang Kruai"
+        },
+        {
+            "city": "Bang Talat"
+        },
+        {
+            "city": "Bang Yai"
+        },
+        {
+            "city": "Khlong Phra Udom"
+        },
+        {
+            "city": "Mueang Nonthaburi"
+        },
+        {
+            "city": "Pakkret"
+        },
+        {
+            "city": "Sai Ma"
+        },
+        {
+            "city": "Talat Khwan"
+        },
+        {
+            "city": "Talat Kwan"
+        }
+    ]
+}

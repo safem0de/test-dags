@@ -1,0 +1,107 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Bang Bon"
+        },
+        {
+            "city": "Bang Kapi"
+        },
+        {
+            "city": "Bang Khae"
+        },
+        {
+            "city": "Bang Kho Laem"
+        },
+        {
+            "city": "Bang Khun Thian"
+        },
+        {
+            "city": "Bang Na"
+        },
+        {
+            "city": "Bang Rak"
+        },
+        {
+            "city": "Bang Sue"
+        },
+        {
+            "city": "Bangkok"
+        },
+        {
+            "city": "Bangkok Yai"
+        },
+        {
+            "city": "Chatuchak"
+        },
+        {
+            "city": "Chom Thong"
+        },
+        {
+            "city": "Din Daeng"
+        },
+        {
+            "city": "Don Mueang"
+        },
+        {
+            "city": "Huai Khwang"
+        },
+        {
+            "city": "Khan Na Yao"
+        },
+        {
+            "city": "Khlong Sam Wa"
+        },
+        {
+            "city": "Khlong San"
+        },
+        {
+            "city": "Lat Phrao"
+        },
+        {
+            "city": "Nong Khaem"
+        },
+        {
+            "city": "Pathum Wan"
+        },
+        {
+            "city": "Phaya Thai"
+        },
+        {
+            "city": "Phra Khanong"
+        },
+        {
+            "city": "Phra Nakhon"
+        },
+        {
+            "city": "Ratchathewi"
+        },
+        {
+            "city": "Sai Mai"
+        },
+        {
+            "city": "Samphanthawong"
+        },
+        {
+            "city": "Saphan Sung"
+        },
+        {
+            "city": "Sathon"
+        },
+        {
+            "city": "Taling Chan"
+        },
+        {
+            "city": "Thawi Watthana"
+        },
+        {
+            "city": "Thung Khru"
+        },
+        {
+            "city": "Wang Thonglang"
+        },
+        {
+            "city": "Watthana"
+        }
+    ]
+}

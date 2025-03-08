@@ -1,0 +1,20 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Buri Ram"
+        },
+        {
+            "city": "Chamni"
+        },
+        {
+            "city": "Lam Plai Mat"
+        },
+        {
+            "city": "Nang Rong"
+        },
+        {
+            "city": "Nong Ki"
+        }
+    ]
+}

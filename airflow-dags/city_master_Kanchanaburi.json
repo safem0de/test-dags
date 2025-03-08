@@ -1,0 +1,29 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Tai"
+        },
+        {
+            "city": "Kanchanaburi"
+        },
+        {
+            "city": "Nong Prue"
+        },
+        {
+            "city": "Phanom Thuan"
+        },
+        {
+            "city": "Sangkhla Buri"
+        },
+        {
+            "city": "Tha Maka"
+        },
+        {
+            "city": "Tha Muang"
+        },
+        {
+            "city": "Wang Khanai"
+        }
+    ]
+}

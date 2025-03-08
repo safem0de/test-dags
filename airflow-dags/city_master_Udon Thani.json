@@ -1,0 +1,14 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Kut Sa"
+        },
+        {
+            "city": "Nong Han"
+        },
+        {
+            "city": "Udon Thani"
+        }
+    ]
+}

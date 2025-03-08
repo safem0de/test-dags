@@ -1,0 +1,17 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ko Lanta Yai"
+        },
+        {
+            "city": "Krabi"
+        },
+        {
+            "city": "Nuea Khlong"
+        },
+        {
+            "city": "Saladan"
+        }
+    ]
+}

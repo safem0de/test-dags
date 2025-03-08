@@ -1,0 +1,50 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Chiang Khong"
+        },
+        {
+            "city": "Chiang Rai"
+        },
+        {
+            "city": "Doi Luang"
+        },
+        {
+            "city": "Mae Chan"
+        },
+        {
+            "city": "Mae Fa Luang"
+        },
+        {
+            "city": "Mae Kon"
+        },
+        {
+            "city": "Mae Sai"
+        },
+        {
+            "city": "Nang Lae"
+        },
+        {
+            "city": "Phan"
+        },
+        {
+            "city": "Pong Pha"
+        },
+        {
+            "city": "Rim Kok"
+        },
+        {
+            "city": "Rop Wiang"
+        },
+        {
+            "city": "Wiang"
+        },
+        {
+            "city": "Wiang Chai"
+        },
+        {
+            "city": "Wiang Phang Kham"
+        }
+    ]
+}

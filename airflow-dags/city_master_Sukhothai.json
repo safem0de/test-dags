@@ -1,0 +1,17 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Pak Khwae"
+        },
+        {
+            "city": "Sawankhalok"
+        },
+        {
+            "city": "Sukhothai"
+        },
+        {
+            "city": "Yang Sai"
+        }
+    ]
+}

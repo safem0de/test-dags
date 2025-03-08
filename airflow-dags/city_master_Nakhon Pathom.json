@@ -1,0 +1,17 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Nakhon Chai Si"
+        },
+        {
+            "city": "Nakhon Pathom"
+        },
+        {
+            "city": "Salaya"
+        },
+        {
+            "city": "Sam Phran"
+        }
+    ]
+}

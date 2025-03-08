@@ -1,0 +1,23 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Karon"
+        },
+        {
+            "city": "Ban Ko Kaeo"
+        },
+        {
+            "city": "Kathu"
+        },
+        {
+            "city": "Mueang Phuket"
+        },
+        {
+            "city": "Phuket"
+        },
+        {
+            "city": "Thalang"
+        }
+    ]
+}

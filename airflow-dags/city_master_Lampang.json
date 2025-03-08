@@ -1,0 +1,23 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Dong"
+        },
+        {
+            "city": "Bo Haeo"
+        },
+        {
+            "city": "Ko Kha"
+        },
+        {
+            "city": "Mae Mo"
+        },
+        {
+            "city": "Pong Yang Khok"
+        },
+        {
+            "city": "Soem Ngam"
+        }
+    ]
+}

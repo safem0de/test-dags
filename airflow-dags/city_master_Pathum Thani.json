@@ -1,0 +1,29 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Klang"
+        },
+        {
+            "city": "Khlong Luang"
+        },
+        {
+            "city": "Khlong Nueng"
+        },
+        {
+            "city": "Lam Luk Ka"
+        },
+        {
+            "city": "Lat Sawai"
+        },
+        {
+            "city": "Nong Suea"
+        },
+        {
+            "city": "Pathum Thani"
+        },
+        {
+            "city": "Thanyaburi"
+        }
+    ]
+}

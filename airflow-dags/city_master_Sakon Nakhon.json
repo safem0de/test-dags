@@ -1,0 +1,14 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Phang Khon"
+        },
+        {
+            "city": "Sakon Nakhon"
+        },
+        {
+            "city": "Sawang Daen Din"
+        }
+    ]
+}

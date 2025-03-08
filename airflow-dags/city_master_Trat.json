@@ -1,0 +1,14 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Khlong Yai"
+        },
+        {
+            "city": "Ko Chang Tai"
+        },
+        {
+            "city": "Trat"
+        }
+    ]
+}

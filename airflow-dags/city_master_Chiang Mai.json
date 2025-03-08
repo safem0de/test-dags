@@ -1,0 +1,80 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Pong"
+        },
+        {
+            "city": "Ban Waen"
+        },
+        {
+            "city": "Chang Klan"
+        },
+        {
+            "city": "Chang Moi"
+        },
+        {
+            "city": "Chang Phueak"
+        },
+        {
+            "city": "Chiang Dao"
+        },
+        {
+            "city": "Chiang Mai"
+        },
+        {
+            "city": "Doi Saket"
+        },
+        {
+            "city": "Doi Tao"
+        },
+        {
+            "city": "Fa Ham"
+        },
+        {
+            "city": "Hang Dong"
+        },
+        {
+            "city": "Hot"
+        },
+        {
+            "city": "Mae Hia"
+        },
+        {
+            "city": "Mae On"
+        },
+        {
+            "city": "Mae Rim"
+        },
+        {
+            "city": "Nam Phrae"
+        },
+        {
+            "city": "Nong Chom"
+        },
+        {
+            "city": "San Kamphaeng"
+        },
+        {
+            "city": "San Pa Tong"
+        },
+        {
+            "city": "San Sai"
+        },
+        {
+            "city": "Saraphi"
+        },
+        {
+            "city": "Suthep"
+        },
+        {
+            "city": "Talat Khwan"
+        },
+        {
+            "city": "Tha Sala"
+        },
+        {
+            "city": "Wat Ket"
+        }
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Bueng"
+        },
+        {
+            "city": "Ban Suan"
+        },
+        {
+            "city": "Ban Talat Bueng"
+        },
+        {
+            "city": "Bang Lamung"
+        },
+        {
+            "city": "Chon Buri"
+        },
+        {
+            "city": "Pattaya City"
+        },
+        {
+            "city": "Phan Thong"
+        },
+        {
+            "city": "Pong"
+        },
+        {
+            "city": "Sattahip"
+        },
+        {
+            "city": "Si Racha"
+        },
+        {
+            "city": "Thung Sukhla"
+        }
+    ]
+}

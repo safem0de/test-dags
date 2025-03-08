@@ -1,0 +1,26 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Klaeng"
+        },
+        {
+            "city": "Maptaphut"
+        },
+        {
+            "city": "Nikhom Phattana"
+        },
+        {
+            "city": "Pluak Daeng"
+        },
+        {
+            "city": "Rayong"
+        },
+        {
+            "city": "Sam Nak Thon"
+        },
+        {
+            "city": "Tha Pradu"
+        }
+    ]
+}

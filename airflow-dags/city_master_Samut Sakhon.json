@@ -1,0 +1,17 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Phaeo"
+        },
+        {
+            "city": "Bang Nam Chuet"
+        },
+        {
+            "city": "Om Noi"
+        },
+        {
+            "city": "Samut Sakhon"
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Mae Pa"
+        },
+        {
+            "city": "Mae Sot"
+        },
+        {
+            "city": "Phra That Pha Daeng"
+        },
+        {
+            "city": "Tak"
+        }
+    ]
+}

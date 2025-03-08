@@ -1,0 +1,14 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Bueng Bun"
+        },
+        {
+            "city": "Kantharalak"
+        },
+        {
+            "city": "Si Sa Ket"
+        }
+    ]
+}

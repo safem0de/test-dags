@@ -1,0 +1,14 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Ban Thi"
+        },
+        {
+            "city": "Mueang"
+        },
+        {
+            "city": "Pa Sak"
+        }
+    ]
+}

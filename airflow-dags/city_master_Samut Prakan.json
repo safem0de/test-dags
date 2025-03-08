@@ -1,0 +1,35 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Bang Bo District"
+        },
+        {
+            "city": "Bang Kaeo"
+        },
+        {
+            "city": "Bang Phli"
+        },
+        {
+            "city": "Bang Pla"
+        },
+        {
+            "city": "Bang Sao Thong"
+        },
+        {
+            "city": "Pak Nam"
+        },
+        {
+            "city": "Phra Pradaeng"
+        },
+        {
+            "city": "Racha Thewa"
+        },
+        {
+            "city": "Samut Prakan"
+        },
+        {
+            "city": "Song Khanong"
+        }
+    ]
+}

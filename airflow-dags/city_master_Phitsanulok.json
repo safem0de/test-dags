@@ -1,0 +1,14 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Phitsanulok"
+        },
+        {
+            "city": "Wang Thong"
+        },
+        {
+            "city": "Wat Chan"
+        }
+    ]
+}

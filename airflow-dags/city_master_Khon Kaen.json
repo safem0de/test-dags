@@ -1,0 +1,20 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "city": "Chum Phae"
+        },
+        {
+            "city": "Khon Kaen"
+        },
+        {
+            "city": "Kranuan"
+        },
+        {
+            "city": "Nam Phong"
+        },
+        {
+            "city": "Sam Sung"
+        }
+    ]
+}
