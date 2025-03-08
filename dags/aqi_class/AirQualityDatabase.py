@@ -18,7 +18,7 @@ class AirQualityDatabase:
         print(f"API Url: {self.api_url}")
         print(f"API Key: {self.api_key[:3]}******{self.api_key[-3:]}")
 
-    def json_to_list(filename: str, parent_key: str, child_key: str) -> list:
+    def json_to_list(self, filename: str, parent_key: str, child_key: str) -> list:
         """
         Extracts a list of values from a JSON file based on the specified keys.
 
