@@ -19,7 +19,7 @@ class AirQualityDatabase:
         print(f"API Url: {self.api_url}")
         print(f"API Key: {self.api_key[:3]}******{self.api_key[-3:]}")
 
-    def map_region(state):
+    def map_region(self, state):
         """
         คืนค่าภาค (region) ตามชื่อจังหวัด
         เหนือ	    North
