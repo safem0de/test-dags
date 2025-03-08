@@ -49,10 +49,7 @@ def sql_command(schema_name:str, sql_statement:str):
     cursor.execute(sql)
     connection.commit()
     
-
-## Pipeline method
-#### database
-def _check_conn_string(conn_id: str):
+def check_conn_string(conn_id: str):
     """
     ตรวจสอบว่าการเชื่อมต่อฐานข้อมูล PostgreSQL ใช้ conn_id ที่กำหนดสามารถเชื่อมต่อได้หรือไม่
     """
@@ -67,9 +64,13 @@ def _check_conn_string(conn_id: str):
     except Exception as e:
         print(f"❌ Connection failed: {str(e)}")
         return False
+    
 
+## Pipeline method
+#### database
 
 def _create_aqi_database():
+    check_conn_string(CONN_STR)
     sql_statement = """
         CREATE DATABASE IF NOT EXISTS aqi_database;
         )
@@ -122,11 +123,6 @@ with DAG(
 ):
     start = EmptyOperator(task_id="start")
 
-    check_conn_string = PythonOperator(
-        task_id="check_conn_string",
-        python_callable=_check_conn_string(CONN_STR),
-    )
-
     create_aqi_database = PythonOperator(
         task_id="create_aqi_database",
         python_callable=_create_aqi_database,
@@ -149,4 +145,4 @@ with DAG(
 
     end = EmptyOperator(task_id="end")
 
-    start >> check_conn_string >> create_aqi_database >> create_aqi_table_location >> init_airquality_data >> get_state_data >> end
+    start >> create_aqi_database >> create_aqi_table_location >> init_airquality_data >> get_state_data >> end
