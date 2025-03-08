@@ -34,21 +34,29 @@ def create_file_if_not_exist(path: str, filename: str, data: dict):
         print(f"⚠️ File already exists: {file_path}")
 
 
-def sql_command(database_name: str, sql_statement: str):
+def execute_sql(database_name: str, sql_statement: str):
     """
-    Execute SQL command in the specified PostgreSQL database.
+    Execute an SQL statement on the specified PostgreSQL database.
     """
-    pg_hook = PostgresHook(
-        postgres_conn_id=CONN_STR,
-        schema=database_name  # ระบุ Database ที่ต้องการเชื่อมต่อ
-    )
-    connection = pg_hook.get_conn()
-    cursor = connection.cursor()
+    try:
+        pg_hook = PostgresHook(
+            postgres_conn_id=CONN_STR, 
+            schema=database_name  # เชื่อมต่อกับ database ที่กำหนด
+        )
+        connection = pg_hook.get_conn()
+        cursor = connection.cursor()
 
-    cursor.execute(sql_statement)
-    connection.commit()
-    cursor.close()
-    connection.close()
+        cursor.execute(sql_statement)
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        print(f"✅ SQL executed successfully on database: {database_name}")
+
+    except Exception as e:
+        print(f"❌ Error executing SQL on {database_name}: {str(e)}")
+
 
 
 def check_conn_string(conn_id: str):
@@ -103,7 +111,8 @@ def _create_aqi_table_location():
             UNIQUE (city, state, country)
         );
     """
-    sql_command("aqi_database", sql_statement)
+    execute_sql("aqi_database", sql_statement)
+
 
 #### api
 def _init_airquality_data():
