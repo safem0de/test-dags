@@ -30,13 +30,13 @@ class AirQualityDatabase:
         ใต้         South
         """
         region_mapping = {
-            "North": {'Chiang Mai', 'Chiang Rai', 'Lampang', 'Lamphun', 'Nan', 'Phayao', 'Phrae', 'Mae Hong Son', 'Tak', 'Uttaradit'},
-            "Northeast": {'Amnat Charoen', 'Buriram', 'Chaiyaphum', 'Kalasin', 'Khon Kaen', 'Loei', 'Maha Sarakham', 'Mukdahan',
+            "North": {'Chiang Mai', 'Chiang Rai', 'Lampang', 'Lamphun', 'Nan', 'Phayao', 'Phrae', 'Mae Hong Son', 'Sukhothai', 'Tak', 'Uttaradit'},
+            "Northeast": {'Amnat Charoen', 'Buriram', 'Chaiyaphum', 'Changwat Bueng Kan', 'Changwat Ubon Ratchathani', 'Kalasin', 'Khon Kaen', 'Loei', 'Maha Sarakham', 'Mukdahan',
                     'Nakhon Phanom', 'Nakhon Ratchasima', 'Nong Bua Lamphu', 'Nong Khai', 'Roi Et', 'Sakon Nakhon', 
                     'Sisaket', 'Surin', 'Ubon Ratchathani', 'Udon Thani', 'Yasothon'},
             "Central": {'Ang Thong', 'Bangkok', 'Chai Nat', 'Kamphaeng Phet', 'Lopburi', 'Nakhon Nayok', 'Nakhon Pathom',
                     'Nakhon Sawan', 'Nonthaburi', 'Pathum Thani', 'Phetchabun', 'Phichit', 'Phitsanulok', 'Phra Nakhon Si Ayutthaya',
-                    'Samut Prakan', 'Samut Sakhon', 'Samut Songkhram', 'Sara Buri', 'Sing Buri', 'Suphan Buri'},
+                    'Samut Prakan', 'Samut Sakhon', 'Samut Songkhram', 'Sara Buri', 'Sing Buri', 'Suphan Buri','Uthai Thani'},
             "East": {'Chachoengsao', 'Chanthaburi', 'Chon Buri', 'Prachin Buri', 'Rayong', 'Sa Kaeo', 'Trat'},
             "West": {'Kanchanaburi', 'Phetchaburi', 'Prachuap Khiri Khan', 'Ratchaburi', 'Tak'},
             "South": {'Chumphon', 'Krabi', 'Nakhon Si Thammarat', 'Narathiwat', 'Pattani', 'Phangnga', 'Phatthalung',
