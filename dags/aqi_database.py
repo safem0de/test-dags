@@ -89,7 +89,7 @@ def _create_aqi_database():
 
 def _create_aqi_table_location():
     sql_statement = """
-        CREATE TABLE IF NOT EXISTS aqi_database.location (
+        CREATE TABLE IF NOT EXISTS location (
             location_id SERIAL PRIMARY KEY,
             city VARCHAR(255) NOT NULL,
             state VARCHAR(255) NOT NULL,
