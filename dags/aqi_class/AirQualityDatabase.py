@@ -1,7 +1,7 @@
 import json
 import os
 import requests
-from ratelimit import limits, sleep_and_retry
+import time
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 
@@ -13,6 +13,7 @@ class AirQualityDatabase:
         self.api_url = api_url
         self.api_key = api_key
         self.dag_file_path = dag_file_path
+        self.last_request_time = 0
 
         print(f"API Url: {self.api_url}")
         print(f"API Key: {self.api_key[:3]}******{self.api_key[-3:]}")
@@ -65,11 +66,20 @@ class AirQualityDatabase:
 
 
     # ✅ จำกัด API Request (5 ครั้ง/นาที)
-    @sleep_and_retry
-    @limits(calls=5, period=60)
-    def fetch_api(self, endpoint: str, params: dict = None):
+    def fetch_api(self, endpoint: str, rate_limit = 5, params: dict = None):
         """Fetch AQI data from API with dynamic parameters"""
         url = f"{self.api_url}{endpoint}"
+
+        request_interval = 60 / rate_limit  # เช่น 5 calls/min → รอ 12 วินาที/call
+        current_time = time.time()
+        time_since_last_request = current_time - self.last_request_time
+
+        # ✅ ถ้ายังไม่ถึงเวลาที่กำหนด ให้รอ
+        if time_since_last_request < request_interval:
+            wait_time = request_interval - time_since_last_request
+            print(f"⏳ Waiting {wait_time:.2f} seconds before next API call...")
+            time.sleep(wait_time)
+        
         try:
             response = requests.get(url, params=params)
             response.raise_for_status()
