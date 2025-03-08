@@ -18,6 +18,40 @@ class AirQualityDatabase:
         print(f"API Url: {self.api_url}")
         print(f"API Key: {self.api_key[:3]}******{self.api_key[-3:]}")
 
+    def json_to_list(filename: str, parent_key: str, child_key: str) -> list:
+        """
+        Extracts a list of values from a JSON file based on the specified keys.
+
+        :param filename: Path to the JSON file.
+        :param parent_key: The key that contains the list of dictionaries.
+        :param child_key: The key to extract values from each dictionary inside the parent_key list.
+        :return: A list of extracted values.
+        """
+        try:
+            # อ่าน JSON จากไฟล์
+            with open(filename, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            # ตรวจสอบว่า JSON เป็น dictionary และมี parent_key ที่ต้องการ
+            if not isinstance(data, dict) or parent_key not in data:
+                print(f"❌ Error: JSON file does not contain expected '{parent_key}' key.")
+                return []
+
+            # ตรวจสอบว่า parent_key มีข้อมูลเป็น list หรือไม่
+            if not isinstance(data[parent_key], list):
+                print(f"❌ Error: '{parent_key}' is not a list.")
+                return []
+
+            # ดึงค่าจาก child_key ในแต่ละ dictionary
+            return [item.get(child_key, None) for item in data[parent_key]]
+
+        except FileNotFoundError:
+            print(f"❌ Error: File '{filename}' not found.")
+            return []
+
+        except json.JSONDecodeError:
+            print(f"❌ Error: File '{filename}' is not a valid JSON file.")
+            return []
 
     # ✅ ตรวจสอบ Connection ของ Database
     def check_conn_string(self):

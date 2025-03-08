@@ -1,5 +1,6 @@
-from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
+import json
 
+from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
@@ -32,10 +33,15 @@ def _create_aqi_table_weather_data():
 def _get_state_data():
     aqi_db.get_state_data()
 
+def _get_city_data():
+    state_list = aqi_db.json_to_list(state_file_name, "data", "state")
+    for st in state_list:
+        aqi_db.get_city_data(st)
+
 with DAG(
     "airquality_database",
     schedule=None,
-    start_date=timezone.datetime(2025, 3, 6),
+    start_date=timezone.datetime(2025, 3, 8),
     tags=["capstone","database"]
 ):
     start = EmptyOperator(task_id="start")
@@ -65,7 +71,12 @@ with DAG(
         python_callable=_get_state_data,
     )
 
+    get_city_data = PythonOperator(
+        task_id="get_city_data",
+        python_callable=_get_city_data,
+    )
+
     end = EmptyOperator(task_id="end")
 
     start >> create_aqi_database >> create_aqi_table_location >> create_aqi_table_aqi_data >> create_aqi_table_weather_data >> end
-    start >> get_state_data >> end
+    start >> get_state_data >> get_city_data >> end
