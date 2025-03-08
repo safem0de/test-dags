@@ -14,6 +14,9 @@ class AirQualityDatabase:
         self.api_key = api_key
         self.dag_file_path = dag_file_path
 
+        print(f"API Url: {self.api_url}")
+        print(f"API Key: {self.api_key[:3]}******{self.api_key[-3:]}")
+
 
     # ✅ ตรวจสอบ Connection ของ Database
     def check_conn_string(self):
