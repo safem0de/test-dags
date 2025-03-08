@@ -66,10 +66,13 @@ class AirQualityDatabase:
 
 
     # ✅ จำกัด API Request (5 ครั้ง/นาที)
-    def fetch_api(self, endpoint: str, rate_limit = 5, params: dict = None):
+    def fetch_api(self, endpoint: str, rate_limit : int = 5, params: dict = None):
         """Fetch AQI data from API with dynamic parameters"""
-        url = f"{self.api_url}{endpoint}"
 
+        if not isinstance(rate_limit, int):
+            raise ValueError(f"❌ rate_limit ต้องเป็น int แต่ได้รับ {type(rate_limit)}")
+
+        url = f"{self.api_url}{endpoint}"
         request_interval = 60 / rate_limit  # เช่น 5 calls/min → รอ 12 วินาที/call
         current_time = time.time()
         time_since_last_request = current_time - self.last_request_time
@@ -172,7 +175,7 @@ class AirQualityDatabase:
             "country": "thailand",
             "key": self.api_key
         }
-        data = self.fetch_api("v2/states", params)
+        data = self.fetch_api("v2/states", 5, params)
         print(data)
 
         self.create_file_if_not_exist(filename, data)
@@ -193,7 +196,7 @@ class AirQualityDatabase:
             "country": "thailand",
             "key": self.api_key
         }
-        data = self.fetch_api("v2/cities", params)
+        data = self.fetch_api("v2/cities", 5, params)
         print(data)
 
         self.create_file_if_not_exist(filename, data)
