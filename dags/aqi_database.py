@@ -28,6 +28,21 @@ aqi_db = AirQualityDatabase(conn_id, api_url, api_key, dag_file_path)
 # # ✅ ดึงข้อมูลอำเภอของ "Bangkok"
 # aqi_db.get_city_data("Bangkok")
 
+def _create_aqi_database():
+    aqi_db.create_aqi_database()
+
+def _create_aqi_table_location():
+    aqi_db.create_aqi_table_location()
+
+def _create_aqi_table_aqi_data():
+    aqi_db.create_aqi_table_aqi_data()
+
+def _create_aqi_table_weather_data():
+    aqi_db.create_aqi_table_weather_data()
+
+def _get_state_data():
+    aqi_db.get_state_data()
+
 with DAG(
     "airquality_database",
     schedule=None,
@@ -38,27 +53,27 @@ with DAG(
 
     create_aqi_database = PythonOperator(
         task_id="create_aqi_database",
-        python_callable=aqi_db.create_aqi_database(),
+        python_callable=_create_aqi_database,
     )
 
     create_aqi_table_location = PythonOperator(
         task_id="create_aqi_table_location",
-        python_callable=aqi_db.create_aqi_table_location(),
+        python_callable=_create_aqi_table_location,
     )
 
     create_aqi_table_aqi_data = PythonOperator(
         task_id="create_aqi_table_aqi_data",
-        python_callable=aqi_db.create_aqi_table_aqi_data(),
+        python_callable=_create_aqi_table_aqi_data,
     )
 
     create_aqi_table_weather_data = PythonOperator(
         task_id="create_aqi_table_weather_data",
-        python_callable=aqi_db.create_aqi_table_weather_data(),
+        python_callable=_create_aqi_table_weather_data,
     )
 
     get_state_data = PythonOperator(
         task_id="get_state_data",
-        python_callable=aqi_db.get_state_data(),
+        python_callable=_get_state_data,
     )
 
     end = EmptyOperator(task_id="end")
