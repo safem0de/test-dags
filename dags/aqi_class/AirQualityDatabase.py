@@ -119,6 +119,7 @@ class AirQualityDatabase:
         try:
             response = requests.get(url, params=params)
             response.raise_for_status()
+            self.last_request_time = time.time() # บันทึกเวลาล่าสุดที่เรียก API
             return response.json()
         except requests.exceptions.RequestException as e:
             print(f"❌ API Request failed: {e}")

@@ -1,4 +1,5 @@
 import os
+import time
 
 from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
 from airflow import DAG
@@ -45,6 +46,7 @@ def _get_city_data():
     state_list = aqi_db.json_to_list(file_path, "data", "state")
     for st in state_list:
         aqi_db.get_city_data(st)
+        time.sleep(3)
 
 with DAG(
     "airquality_database",
