@@ -1,4 +1,4 @@
-import json
+import os
 
 from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
 from airflow import DAG
@@ -34,7 +34,15 @@ def _get_state_data():
     aqi_db.get_state_data()
 
 def _get_city_data():
-    state_list = aqi_db.json_to_list(state_file_name, "data", "state")
+    # ✅ สร้าง path ให้ถูกต้อง
+    file_path = os.path.join(dag_file_path, state_file_name)
+
+    # ✅ ตรวจสอบว่าไฟล์มีอยู่จริง
+    if not os.path.exists(file_path):
+        print(f"❌ Error: File '{file_path}' not found.")
+        return
+
+    state_list = aqi_db.json_to_list(file_path, "data", "state")
     for st in state_list:
         aqi_db.get_city_data(st)
 
