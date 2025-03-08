@@ -1,14 +1,15 @@
 from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
 
 from airflow import DAG
+from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils import timezone
 
 # ตั้งค่าพารามิเตอร์
 conn_id = "0_postgres_db"
-api_url = "https://api.waqi.info/"
-api_key = "YOUR_API_KEY"
+api_url = Variable.get("air_quality_url")
+api_key = Variable.get("air_quality_key")
 dag_file_path = "/opt/airflow/dags/"
 
 state_file_name = "state_master.json"

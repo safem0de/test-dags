@@ -13,6 +13,7 @@ class AirQualityDatabase:
         self.api_url = api_url
         self.api_key = api_key
         self.dag_file_path = dag_file_path
+        self.last_request_time = 0
 
         print(f"API Url: {self.api_url}")
         print(f"API Key: {self.api_key[:3]}******{self.api_key[-3:]}")
@@ -64,9 +65,21 @@ class AirQualityDatabase:
             print(f"⚠️ File already exists: {file_path}")
 
 
-    # ✅ จำกัด API Request (5 ครั้ง/นาที)
-    def fetch_api(self, endpoint: str, params: dict = None):
+    def fetch_api(self, endpoint: str, rate_limit : int = 5, params: dict = None):
         """Fetch AQI data from API with dynamic parameters"""
+        if not isinstance(rate_limit, int):
+            raise ValueError(f"❌ rate_limit ต้องเป็น int แต่ได้รับ {type(rate_limit)}")
+
+        request_interval = 60 / rate_limit  # เช่น 5 calls/min → รอ 12 วินาที/call
+        current_time = time.time()
+        time_since_last_request = current_time - self.last_request_time
+
+        # ✅ ถ้ายังไม่ถึงเวลาที่กำหนด ให้รอ
+        if time_since_last_request < request_interval:
+            wait_time = request_interval - time_since_last_request
+            print(f"⏳ Waiting {wait_time:.2f} seconds before next API call...")
+            time.sleep(wait_time)
+
         url = f"{self.api_url}{endpoint}"
         
         try:
@@ -161,7 +174,7 @@ class AirQualityDatabase:
             "country": "thailand",
             "key": self.api_key
         }
-        data = self.fetch_api("v2/states", params)
+        data = self.fetch_api(endpoint="v2/states", params=params)
         print(data)
 
         self.create_file_if_not_exist(filename, data)
@@ -182,7 +195,7 @@ class AirQualityDatabase:
             "country": "thailand",
             "key": self.api_key
         }
-        data = self.fetch_api("v2/cities", params)
+        data = self.fetch_api(endpoint="v2/cities", params=params)
         print(data)
 
         self.create_file_if_not_exist(filename, data)
