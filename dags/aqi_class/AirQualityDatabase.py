@@ -161,7 +161,7 @@ class AirQualityDatabase:
             "country": "thailand",
             "key": self.api_key
         }
-        data = self.fetch_api("v2/states", 5, params)
+        data = self.fetch_api("v2/states", params)
         print(data)
 
         self.create_file_if_not_exist(filename, data)
@@ -182,7 +182,7 @@ class AirQualityDatabase:
             "country": "thailand",
             "key": self.api_key
         }
-        data = self.fetch_api("v2/cities", 5, params)
+        data = self.fetch_api("v2/cities", params)
         print(data)
 
         self.create_file_if_not_exist(filename, data)
