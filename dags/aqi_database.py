@@ -124,7 +124,7 @@ with DAG(
 
     check_conn_string = PythonOperator(
         task_id="check_conn_string",
-        python_callable=_check_conn_string,
+        python_callable=_check_conn_string(CONN_STR),
     )
 
     create_aqi_database = PythonOperator(
