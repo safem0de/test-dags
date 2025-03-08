@@ -34,19 +34,23 @@ def create_file_if_not_exist(path: str, filename: str, data: dict):
         print(f"⚠️ File already exists: {file_path}")
 
 
-def sql_command(schema_name:str, sql_statement:str):
+def sql_command(database_name: str, sql_statement: str):
+    """
+    Execute SQL command in the specified PostgreSQL database.
+    """
     pg_hook = PostgresHook(
         postgres_conn_id=CONN_STR,
-        schema=schema_name
+        schema=database_name  # ระบุ Database ที่ต้องการเชื่อมต่อ
     )
     connection = pg_hook.get_conn()
     cursor = connection.cursor()
 
-    sql = sql_statement
-
-    cursor.execute(sql)
+    cursor.execute(sql_statement)
     connection.commit()
-    
+    cursor.close()
+    connection.close()
+
+
 def check_conn_string(conn_id: str):
     """
     ตรวจสอบว่าการเชื่อมต่อฐานข้อมูล PostgreSQL ใช้ conn_id ที่กำหนดสามารถเชื่อมต่อได้หรือไม่
@@ -89,7 +93,7 @@ def _create_aqi_database():
 
 def _create_aqi_table_location():
     sql_statement = """
-        CREATE TABLE IF NOT EXISTS location (
+        CREATE TABLE IF NOT EXISTS public.location (
             location_id SERIAL PRIMARY KEY,
             city VARCHAR(255) NOT NULL,
             state VARCHAR(255) NOT NULL,
