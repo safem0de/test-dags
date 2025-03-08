@@ -18,22 +18,20 @@ API_KEY = Variable.get("air_quality_key")
 
 ## function
 
-def create_file_if_not_exist(path: str, filename: str, data:str):
+def create_file_if_not_exist(path: str, filename: str, data: dict):
     """Create a file if it does not exist in the given path."""
     file_path = os.path.join(path, filename)
     
-    try:
-        parsed_data = json.loads(data)
-    except json.JSONDecodeError:
-        print("Error: Provided data is not valid JSON.")
+    if not isinstance(data, dict):  # เช็คให้แน่ใจว่า data เป็น dict
+        print("Error: Provided data is not a valid JSON dictionary.")
         return
 
     if not os.path.exists(file_path):
         with open(file_path, 'w') as file:
-            json.dump(data, parsed_data)
-        print(f"File created: {file_path}")
+            json.dump(data, file, indent=4)  # บันทึกเป็นไฟล์ JSON ที่อ่านง่าย
+        print(f"✅ File created: {file_path}")
     else:
-        print(f"File already exists: {file_path}")
+        print(f"⚠️ File already exists: {file_path}")
 
 
 def sql_command(schema_name:str, sql_statement:str):
