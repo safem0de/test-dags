@@ -72,8 +72,13 @@ def check_conn_string(conn_id: str):
 def _create_aqi_database():
     check_conn_string(CONN_STR)
     sql_statement = """
-        CREATE DATABASE IF NOT EXISTS aqi_database;
-        )
+        DO $$ 
+        BEGIN 
+           IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'aqi_database') 
+           THEN 
+              CREATE DATABASE aqi_database; 
+           END IF; 
+        END $$;
     """
     sql_command("postgres", sql_statement)
 
