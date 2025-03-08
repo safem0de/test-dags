@@ -71,16 +71,22 @@ def check_conn_string(conn_id: str):
 
 def _create_aqi_database():
     check_conn_string(CONN_STR)
-    sql_statement = """
-        DO $$ 
-        BEGIN 
-           IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'aqi_database') 
-           THEN 
-              CREATE DATABASE aqi_database; 
-           END IF; 
-        END $$;
-    """
-    sql_command("postgres", sql_statement)
+    
+    pg_hook = PostgresHook(postgres_conn_id=CONN_STR)
+    connection = pg_hook.get_conn()
+    connection.set_isolation_level(0)  # ปิด transaction block
+
+    cursor = connection.cursor()
+
+    # เช็คว่ามี database หรือยัง
+    cursor.execute("SELECT 1 FROM pg_database WHERE datname = 'aqi_database';")
+    exists = cursor.fetchone()
+    
+    if not exists:
+        cursor.execute("CREATE DATABASE aqi_database;")
+        connection.commit()
+    
+    connection.close()
 
 
 def _create_aqi_table_location():
