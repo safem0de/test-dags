@@ -99,7 +99,7 @@ class AirQualityDatabase:
             print(f"⚠️ File already exists: {file_path}")
 
 
-    def fetch_api(self, endpoint: str, rate_limit : int = 5, params: dict = None):
+    def fetch_api(self, endpoint: str, rate_limit : int = 4, params: dict = None):
         """Fetch AQI data from API with dynamic parameters"""
         if not isinstance(rate_limit, int):
             raise ValueError(f"❌ rate_limit ต้องเป็น int แต่ได้รับ {type(rate_limit)}")
