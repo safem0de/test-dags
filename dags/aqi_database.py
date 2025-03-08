@@ -16,17 +16,17 @@ state_file_name = "state_master.json"
 # สร้าง Object สำหรับใช้งาน
 aqi_db = AirQualityDatabase(conn_id, api_url, api_key, dag_file_path)
 
-# ✅ สร้างฐานข้อมูล & ตาราง
-aqi_db.create_aqi_database()
-aqi_db.create_aqi_table_location()
-aqi_db.create_aqi_table_aqi_data()
-aqi_db.create_aqi_table_weather_data()
+# # ✅ สร้างฐานข้อมูล & ตาราง
+# aqi_db.create_aqi_database()
+# aqi_db.create_aqi_table_location()
+# aqi_db.create_aqi_table_aqi_data()
+# aqi_db.create_aqi_table_weather_data()
 
-# ✅ ดึงข้อมูลจังหวัดจาก API
-aqi_db.get_state_data()
+# # ✅ ดึงข้อมูลจังหวัดจาก API
+# aqi_db.get_state_data()
 
-# ✅ ดึงข้อมูลอำเภอของ "Bangkok"
-aqi_db.get_city_data("Bangkok")
+# # ✅ ดึงข้อมูลอำเภอของ "Bangkok"
+# aqi_db.get_city_data("Bangkok")
 
 with DAG(
     "airquality_database",
