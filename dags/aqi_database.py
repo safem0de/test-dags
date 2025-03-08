@@ -47,6 +47,10 @@ def _get_city_data():
     for st in state_list:
         aqi_db.get_city_data(st)
 
+def _generate_state_city_region_csv():
+    transform_output_filename = "transform_state_city_region.csv"
+    aqi_db.generate_state_city_region_csv(dag_file_path,state_file_name,transform_output_filename)
+
 with DAG(
     "airquality_database",
     schedule=None,
@@ -85,7 +89,12 @@ with DAG(
         python_callable=_get_city_data,
     )
 
+    generate_state_city_region_csv = PythonOperator(
+        task_id="generate_state_city_region_csv",
+        python_callable=_generate_state_city_region_csv,
+    )
+
     end = EmptyOperator(task_id="end")
 
     start >> create_aqi_database >> create_aqi_table_location >> create_aqi_table_aqi_data >> create_aqi_table_weather_data >> end
-    start >> get_state_data >> get_city_data >> end
+    start >> get_state_data >> get_city_data >> generate_state_city_region_csv >> end

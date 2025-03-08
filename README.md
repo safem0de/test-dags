@@ -10,3 +10,9 @@ test-dags/  <-- Root ของ Git repo
 │   ├── my_plugin.py
 │── README.md  <-- (optional) ไฟล์อธิบาย repo
 ```
+
+### COPY DATA จาก kube
+```bash
+# PowerShell
+kubectl cp --retries=3 apache-airflow-test/airflow-bb554d448-6xfr4:/opt/airflow/dags ./airflow-dags -c airflow-webserver --no-preserve
+```

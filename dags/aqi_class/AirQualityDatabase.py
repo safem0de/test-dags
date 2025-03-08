@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 import requests
@@ -17,6 +18,37 @@ class AirQualityDatabase:
 
         print(f"API Url: {self.api_url}")
         print(f"API Key: {self.api_key[:3]}******{self.api_key[-3:]}")
+
+    def map_region(state):
+        """
+        คืนค่าภาค (region) ตามชื่อจังหวัด
+        เหนือ	    North
+        อีสาน	    Northeast
+        กลาง	   Central
+        ตะวันออก	East
+        ตะวันตก     West
+        ใต้         South
+        """
+        region_mapping = {
+            "North": {'Chiang Mai', 'Chiang Rai', 'Lampang', 'Lamphun', 'Nan', 'Phayao', 'Phrae', 'Mae Hong Son', 'Tak', 'Uttaradit'},
+            "Northeast": {'Amnat Charoen', 'Buriram', 'Chaiyaphum', 'Kalasin', 'Khon Kaen', 'Loei', 'Maha Sarakham', 'Mukdahan',
+                    'Nakhon Phanom', 'Nakhon Ratchasima', 'Nong Bua Lamphu', 'Nong Khai', 'Roi Et', 'Sakon Nakhon', 
+                    'Sisaket', 'Surin', 'Ubon Ratchathani', 'Udon Thani', 'Yasothon'},
+            "Central": {'Ang Thong', 'Bangkok', 'Chai Nat', 'Kamphaeng Phet', 'Lopburi', 'Nakhon Nayok', 'Nakhon Pathom',
+                    'Nakhon Sawan', 'Nonthaburi', 'Pathum Thani', 'Phetchabun', 'Phichit', 'Phitsanulok', 'Phra Nakhon Si Ayutthaya',
+                    'Samut Prakan', 'Samut Sakhon', 'Samut Songkhram', 'Sara Buri', 'Sing Buri', 'Suphan Buri'},
+            "East": {'Chachoengsao', 'Chanthaburi', 'Chon Buri', 'Prachin Buri', 'Rayong', 'Sa Kaeo', 'Trat'},
+            "West": {'Kanchanaburi', 'Phetchaburi', 'Prachuap Khiri Khan', 'Ratchaburi', 'Tak'},
+            "South": {'Chumphon', 'Krabi', 'Nakhon Si Thammarat', 'Narathiwat', 'Pattani', 'Phangnga', 'Phatthalung',
+                    'Phuket', 'Ranong', 'Satun', 'Songkhla', 'Surat Thani', 'Trang', 'Yala'}
+        }
+        
+        for region, states in region_mapping.items():
+            if state in states:
+                return region
+        
+        return "Unknown"  # Default ถ้าไม่พบข้อมูล
+
 
     def json_to_list(self, filename: str, parent_key: str, child_key: str) -> list:
         """
@@ -104,7 +136,7 @@ class AirQualityDatabase:
         if not isinstance(rate_limit, int):
             raise ValueError(f"❌ rate_limit ต้องเป็น int แต่ได้รับ {type(rate_limit)}")
 
-        request_interval = 60 / rate_limit  # เช่น 5 calls/min → รอ 12 วินาที/call
+        request_interval = 60 / rate_limit  # เช่น 5 calls/min → รอ 12 วินาที/call, 4 calls/min → รอ 15 วินาที/call
         current_time = time.time()
         time_since_last_request = current_time - self.last_request_time
 
@@ -155,6 +187,7 @@ class AirQualityDatabase:
                 country VARCHAR(50) DEFAULT 'Thailand',
                 latitude DECIMAL(10, 6),
                 longitude DECIMAL(10, 6),
+                region VARCHAR(255) NOT NULL,
                 UNIQUE (city, state, country)
             );
         """
@@ -234,3 +267,62 @@ class AirQualityDatabase:
         print(data)
 
         self.create_file_if_not_exist(filename, data)
+
+
+    def generate_state_city_region_csv(self, dag_file_path, state_master, output_filename):
+        """
+        อ่านข้อมูลจาก `state_master.json` และ `city_master_xxx.json`
+        แล้วบันทึกเป็นไฟล์ CSV ในรูปแบบ state, city
+        """
+
+        state_file = os.path.join(dag_file_path, state_master)
+        output_file = os.path.join(dag_file_path, output_filename)
+
+        # ✅ ตรวจสอบว่าไฟล์ state_master.json มีอยู่จริง
+        if not os.path.exists(state_file):
+            print(f"❌ Error: File '{state_file}' not found.")
+            return
+
+        # ✅ อ่านข้อมูล state_master.json
+        with open(state_file, "r", encoding="utf-8") as f:
+            state_data = json.load(f)
+
+        # ✅ ตรวจสอบโครงสร้าง JSON
+        if "data" not in state_data or not isinstance(state_data["data"], list):
+            print(f"❌ Error: Invalid JSON structure in '{state_file}'.")
+            return
+
+        # ✅ เตรียมเก็บข้อมูล state, city
+        state_city_list = []
+
+        # ✅ วนลูปแต่ละจังหวัดเพื่ออ่านข้อมูลเมืองจาก city_master_xxx.json
+        for state_entry in state_data["data"]:
+            state_name = state_entry["state"]
+            region_name = self.map_region(state_name)  # ✅ หา region ตามจังหวัด
+            city_file = os.path.join(dag_file_path, f"city_master_{state_name}.json")
+
+            # ✅ ตรวจสอบว่าไฟล์ city_master_xxx.json มีอยู่จริง
+            if os.path.exists(city_file):
+                with open(city_file, "r", encoding="utf-8") as f:
+                    city_data = json.load(f)
+
+                # ✅ ตรวจสอบโครงสร้าง JSON
+                if "data" in city_data and isinstance(city_data["data"], list):
+                    cities = [city_entry["city"] for city_entry in city_data["data"]]
+                else:
+                    cities = []
+            else:
+                print(f"⚠️ Warning: File '{city_file}' not found. Skipping...")
+                cities = []
+
+            # ✅ เพิ่มข้อมูล state, city ลงใน list
+            for city in cities:
+                state_city_list.append([state_name, city, region_name])
+
+        # ✅ เขียนข้อมูลลงไฟล์ CSV
+        with open(output_file, mode="w", newline="", encoding="utf-8") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["state", "city", "region"])  # ✅ เขียน Header
+            writer.writerows(state_city_list)   # ✅ เขียนข้อมูล
+
+        print(f"✅ File saved: {output_file}")
