@@ -92,14 +92,14 @@ def _create_aqi_database():
 def _create_aqi_table_location():
     sql_statement = """
         CREATE TABLE IF NOT EXISTS location (
-        location_id SERIAL PRIMARY KEY,
-        city VARCHAR(255) NOT NULL,
-        state VARCHAR(255) NOT NULL,
-        country VARCHAR(50) DEFAULT 'Thailand',
-        latitude DECIMAL(10, 6),
-        longitude DECIMAL(10, 6),
-        UNIQUE (city, state, country));
-        )
+            location_id SERIAL PRIMARY KEY,
+            city VARCHAR(255) NOT NULL,
+            state VARCHAR(255) NOT NULL,
+            country VARCHAR(50) DEFAULT 'Thailand',
+            latitude DECIMAL(10, 6),
+            longitude DECIMAL(10, 6),
+            UNIQUE (city, state, country)
+        );
     """
     sql_command("aqi_database", sql_statement)
 
