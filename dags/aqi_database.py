@@ -41,7 +41,7 @@ def execute_sql(database_name: str, sql_statement: str):
     try:
         pg_hook = PostgresHook(
             postgres_conn_id=CONN_STR, 
-            schema=database_name  # เชื่อมต่อกับ database ที่กำหนด
+            database=database_name  # เชื่อมต่อกับ database ที่กำหนด
         )
         connection = pg_hook.get_conn()
         cursor = connection.cursor()
@@ -134,7 +134,7 @@ def _get_state_data():
     data = response.json()
     print(data)
 
-    create_file_if_not_exist(DAG_FILE_PATH,"location_master",data)
+    create_file_if_not_exist(DAG_FILE_PATH,"location_master.json",data)
 
 
 with DAG(
