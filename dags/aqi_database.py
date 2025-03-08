@@ -97,7 +97,7 @@ def _get_state_data():
 
 
 with DAG(
-    "airquality_api_dag",
+    "airquality_database",
     schedule="*/5 * * * *",
     start_date=timezone.datetime(2025, 3, 6),
     tags=["capstone","database"]
