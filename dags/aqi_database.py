@@ -58,6 +58,8 @@ with DAG(
     "airquality_database",
     schedule=None,
     start_date=timezone.datetime(2025, 3, 8),
+    max_active_runs=1,  # ✅ จำกัดให้รันได้ครั้งละ 1 Task
+    concurrency=1,      # ✅ จำกัดให้มี 1 Task ที่รัน API พร้อมกัน
     tags=["capstone","database"]
 ):
     start = EmptyOperator(task_id="start")
