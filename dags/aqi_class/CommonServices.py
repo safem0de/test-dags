@@ -94,7 +94,7 @@ class CommonServices:
     
 
     def create_database(self, conn_id, database_name):
-        self.check_conn_string()
+        self.check_conn_string(conn_id)
         pg_hook = PostgresHook(postgres_conn_id=conn_id)
         connection = pg_hook.get_conn()
         connection.set_isolation_level(0)
