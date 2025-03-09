@@ -92,7 +92,7 @@ class CommonServices:
             print(f"❌ Connection failed: {str(e)}")
             return False
     
-    
+
     def create_database(self, conn_id, database_name):
         self.check_conn_string()
         pg_hook = PostgresHook(postgres_conn_id=conn_id)
@@ -142,7 +142,7 @@ class CommonServices:
             print(f"⚠️ File already exists: {file_path}")
 
 
-    def fetch_api(self, endpoint: str, rate_limit : int = 4, params: dict = None):
+    def fetch_api(self, full_url: str, rate_limit : int = 4, params: dict = None):
         """Fetch AQI data from API with dynamic parameters"""
         if not isinstance(rate_limit, int):
             raise ValueError(f"❌ rate_limit ต้องเป็น int แต่ได้รับ {type(rate_limit)}")
@@ -157,7 +157,7 @@ class CommonServices:
             print(f"⏳ Waiting {wait_time:.2f} seconds before next API call...")
             time.sleep(wait_time)
 
-        url = f"{self.api_url}{endpoint}"
+        url = f"{full_url}"
         
         try:
             response = requests.get(url, params=params)
