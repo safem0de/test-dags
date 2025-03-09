@@ -55,7 +55,11 @@ class AirQualityDatabase:
                 UNIQUE (city, state, country)
             );
         """
-        self.cms.execute_sql("aqi_database", sql)
+        self.cms.execute_sql(
+            conn_id=self.conn_id, 
+            database_name="aqi_database", 
+            sql_statement=sql
+            )
 
 
     # ✅ สร้างตาราง aqi_data
@@ -72,7 +76,11 @@ class AirQualityDatabase:
                 FOREIGN KEY (location_id) REFERENCES location(location_id) ON DELETE CASCADE
             );
         """
-        self.cms.execute_sql("aqi_database", sql)
+        self.cms.execute_sql(
+            conn_id=self.conn_id, 
+            database_name="aqi_database", 
+            sql_statement=sql
+            )
 
 
     # ✅ สร้างตาราง weather_data
@@ -90,7 +98,11 @@ class AirQualityDatabase:
                 FOREIGN KEY (location_id) REFERENCES location(location_id) ON DELETE CASCADE
             );
         """
-        self.cms.execute_sql("aqi_database", sql)
+        self.cms.execute_sql(
+            conn_id=self.conn_id, 
+            database_name="aqi_database", 
+            sql_statement=sql
+            )
 
 
     # ✅ ดึงข้อมูล state (จังหวัด) จาก API และเก็บเป็นไฟล์ JSON
