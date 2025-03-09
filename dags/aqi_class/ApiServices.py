@@ -1,9 +1,8 @@
 import itertools
 import time
 import requests
-from datetime import datetime
 
-class ApiService:
+class ApiServices:
     RESET_TIME = 60  # ⏳ เวลาที่ต้องรอเมื่อ API Key ติด Rate Limit
     RATE_LIMIT = 5  # 🔹 จำกัดจำนวนครั้งที่ API Key ใช้ได้ก่อนจะติด Rate Limit
 
