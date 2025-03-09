@@ -22,21 +22,6 @@ class AirQualityDatabase:
 
     # ✅ สร้างฐานข้อมูล AQI ถ้ายังไม่มี
     def create_aqi_database(self):
-        # self.cms.check_conn_string()
-        # pg_hook = PostgresHook(postgres_conn_id=self.conn_id)
-        # connection = pg_hook.get_conn()
-        # connection.set_isolation_level(0)
-        # cursor = connection.cursor()
-
-        # cursor.execute("SELECT 1 FROM pg_database WHERE datname = 'aqi_database';")
-        # exists = cursor.fetchone()
-        
-        # if not exists:
-        #     cursor.execute("CREATE DATABASE aqi_database;")
-        #     connection.commit()
-        
-        # connection.close()
-        # print("✅ Database 'aqi_database' is ready!")
         self.database_name = "aqi_database"
         self.cms.create_database(self.conn_id, self.database_name)
 
@@ -121,7 +106,11 @@ class AirQualityDatabase:
             "country": "thailand",
             "key": self.api_key
         }
-        data = self.cms.fetch_api(endpoint="v2/states", params=params)
+
+        endpoint="v2/states"
+        full_url = f"{self.api_url}{endpoint}"
+
+        data = self.cms.fetch_api(full_url=full_url, params=params)
         print(data)
 
         self.cms.create_file_if_not_exist(filename, data)
@@ -142,7 +131,11 @@ class AirQualityDatabase:
             "country": "thailand",
             "key": self.api_key
         }
-        data = self.cms.fetch_api(endpoint="v2/cities", params=params)
+
+        endpoint="v2/cities"
+        full_url = f"{self.api_url}{endpoint}"
+
+        data = self.cms.fetch_api(full_url=full_url, params=params)
         print(data)
 
         self.cms.create_file_if_not_exist(filename, data)
@@ -201,7 +194,7 @@ class AirQualityDatabase:
         # ✅ เขียนข้อมูลลงไฟล์ CSV
         with open(output_file, mode="w", newline="", encoding="utf-8") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(["state", "city", "region"])  # ✅ เขียน Header
-            writer.writerows(state_city_list)   # ✅ เขียนข้อมูล
+            writer.writerow(["state", "city", "region"])    # ✅ เขียน Header
+            writer.writerows(state_city_list)               # ✅ เขียนข้อมูล
 
         print(f"✅ File saved: {output_file}")
