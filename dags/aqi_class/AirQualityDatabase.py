@@ -113,7 +113,7 @@ class AirQualityDatabase:
         data = self.cms.fetch_api(full_url=full_url, params=params)
         print(data)
 
-        self.cms.create_file_if_not_exist(filename, data)
+        self.cms.create_file_if_not_exist(file_path=file_path, data=data)
 
 
     # ✅ ดึงข้อมูล city (อำเภอ) ตามจังหวัดจาก API
@@ -138,7 +138,7 @@ class AirQualityDatabase:
         data = self.cms.fetch_api(full_url=full_url, params=params)
         print(data)
 
-        self.cms.create_file_if_not_exist(filename, data)
+        self.cms.create_file_if_not_exist(file_path=file_path, data=data)
 
 
     def generate_state_city_region_csv(self, dag_file_path, state_master, output_filename):

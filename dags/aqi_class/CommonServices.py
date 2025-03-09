@@ -127,8 +127,7 @@ class CommonServices:
 
 
     # ✅ สร้างไฟล์ JSON ถ้ายังไม่มี
-    def create_file_if_not_exist(self, filename: str, data: dict) -> None:
-        file_path = os.path.join(self.dag_file_path, filename)
+    def create_file_if_not_exist(self, file_path: str, data: dict) -> None:
         
         if not isinstance(data, dict):  # ตรวจสอบว่า data เป็น dict
             print("❌ Error: Provided data is not a valid JSON dictionary.")
