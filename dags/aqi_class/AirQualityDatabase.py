@@ -1,10 +1,8 @@
 import csv
 import json
 import os
-
+from dags.aqi_class.ApiServices import ApiServices
 from dags.aqi_class.CommonServices import CommonServices
-from airflow.providers.postgres.hooks.postgres import PostgresHook
-
 
 class AirQualityDatabase:
     """Class สำหรับจัดการ Database, API และการสร้างไฟล์ JSON"""
@@ -14,6 +12,7 @@ class AirQualityDatabase:
         self.api_url = api_url
         self.api_key = api_key
         self.dag_file_path = dag_file_path
+        self.apis = ApiServices()
         self.cms = CommonServices()
         
         print(f"API Url: {self.api_url}")
@@ -110,7 +109,7 @@ class AirQualityDatabase:
         endpoint="v2/states"
         full_url = f"{self.api_url}{endpoint}"
 
-        data = self.cms.fetch_api(full_url=full_url, api_key=self.api_key, params=params)
+        data = self.apis.fetch_api(full_url=full_url, api_key=self.api_key, params=params)
         print(data)
 
         self.cms.create_file_if_not_exist(file_path=file_path, data=data)
@@ -135,7 +134,7 @@ class AirQualityDatabase:
         endpoint="v2/cities"
         full_url = f"{self.api_url}{endpoint}"
 
-        data = self.cms.fetch_api(full_url=full_url, api_key=self.api_key, params=params)
+        data = self.apis.fetch_api(full_url=full_url, api_key=self.api_key, params=params)
         print(data)
 
         self.cms.create_file_if_not_exist(file_path=file_path, data=data)

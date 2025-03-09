@@ -15,9 +15,9 @@ dag_file_path = "/opt/airflow/dags/"
 
 state_file_name = "state_master.json"
 
-# สร้าง Object สำหรับใช้งาน
-aqi_db = AirQualityDatabase(conn_id, api_url, api_key, dag_file_path)
+# เรียกใช้ service ที่จำเป็น
 cms = CommonServices()
+aqi_db = AirQualityDatabase(conn_id, api_url, api_key, dag_file_path)
 
 def _create_aqi_database():
     aqi_db.create_aqi_database()
