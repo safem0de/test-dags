@@ -110,7 +110,7 @@ class AirQualityDatabase:
         endpoint="v2/states"
         full_url = f"{self.api_url}{endpoint}"
 
-        data = self.cms.fetch_api(full_url=full_url, params=params)
+        data = self.cms.fetch_api(full_url=full_url, api_key=self.api_key, params=params)
         print(data)
 
         self.cms.create_file_if_not_exist(file_path=file_path, data=data)
@@ -135,7 +135,7 @@ class AirQualityDatabase:
         endpoint="v2/cities"
         full_url = f"{self.api_url}{endpoint}"
 
-        data = self.cms.fetch_api(full_url=full_url, params=params)
+        data = self.cms.fetch_api(full_url=full_url, api_key=self.api_key, params=params)
         print(data)
 
         self.cms.create_file_if_not_exist(file_path=file_path, data=data)

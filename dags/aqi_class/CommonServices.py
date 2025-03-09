@@ -2,14 +2,67 @@ import requests
 import time
 import json
 import os
-
+from collections import deque
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 class CommonServices:
     """Class สำหรับจัดการ Database, API และการสร้างไฟล์ JSON"""
 
     def __init__(self):
-        self.last_request_time = 0
+        # self.last_request_time = 0
+        self.api_call_tracker = {}  # ✅ Dictionary เก็บการใช้งาน API ตาม API Key
+        self.api_call_timestamps = {}  # ✅ Queue เก็บเวลาที่เรียก API (FIFO)
+
+
+    def _init_api_tracker(self, api_key):
+        """✅ สร้างตัวติดตาม API Call ถ้ายังไม่มี API Key นี้"""
+        if api_key not in self.api_call_tracker:
+            self.api_call_tracker[api_key] = 0
+            self.api_call_timestamps[api_key] = deque()
+
+    
+    def fetch_api(self, full_url: str, api_key: str, rate_limit: int=5, params: dict = None):
+        """
+        ✅ Fetch AQI data with API rate limit control
+        ✅ จำกัด API Call ไม่เกิน `rate_limit` ครั้ง/นาที ตาม API Key
+        """
+        self._init_api_tracker(api_key)
+
+        request_interval = 60 / rate_limit  # ✅ เวลาที่ต้องรอระหว่างการเรียก API (เช่น 12 วินาทีถ้า 5 calls/min)
+        current_time = time.time()
+        
+        # ✅ ถ้าคิวเต็ม (API Calls ครบ 5 ครั้งใน 60 วินาที)
+        if len(self.api_call_timestamps[api_key]) >= rate_limit:
+            first_call_time = self.api_call_timestamps[api_key][0]  # เวลาของ API Call แรกในคิว
+            time_since_first_call = current_time - first_call_time
+
+            if time_since_first_call < 60:  # ✅ ถ้ายังไม่ครบ 60 วินาที ให้รอ
+                wait_time = 60 - time_since_first_call
+                print(f"⏳ API Key {api_key} reached limit! Waiting {wait_time:.2f} seconds...")
+                time.sleep(wait_time)
+
+            # ✅ ลบ API Call เก่าที่หมดอายุออกจากคิว
+            self.api_call_timestamps[api_key].popleft()
+
+        # ✅ สร้าง URL
+        url = f"{full_url}"
+        if params:
+            params["key"] = api_key  # ✅ เพิ่ม API Key ลงใน params
+
+        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+
+            # ✅ บันทึก API Call ใหม่
+            self.api_call_timestamps[api_key].append(time.time())
+            self.api_call_tracker[api_key] += 1
+
+            return response.json()
+        
+        except requests.exceptions.RequestException as e:
+            print(f"❌ API Request failed: {e}")
+            return None
+
 
     def map_region(self, state:str):
         """
@@ -141,28 +194,28 @@ class CommonServices:
             print(f"⚠️ File already exists: {file_path}")
 
 
-    def fetch_api(self, full_url: str, rate_limit : int = 4, params: dict = None):
-        """Fetch AQI data from API with dynamic parameters"""
-        if not isinstance(rate_limit, int):
-            raise ValueError(f"❌ rate_limit ต้องเป็น int แต่ได้รับ {type(rate_limit)}")
+    # def fetch_api(self, full_url: str, rate_limit : int = 4, params: dict = None):
+    #     """Fetch AQI data from API with dynamic parameters"""
+    #     if not isinstance(rate_limit, int):
+    #         raise ValueError(f"❌ rate_limit ต้องเป็น int แต่ได้รับ {type(rate_limit)}")
 
-        request_interval = 60 / rate_limit  # เช่น 5 calls/min → รอ 12 วินาที/call, 4 calls/min → รอ 15 วินาที/call
-        current_time = time.time()
-        time_since_last_request = current_time - self.last_request_time
+    #     request_interval = 60 / rate_limit  # เช่น 5 calls/min → รอ 12 วินาที/call, 4 calls/min → รอ 15 วินาที/call
+    #     current_time = time.time()
+    #     time_since_last_request = current_time - self.last_request_time
 
-        # ✅ ถ้ายังไม่ถึงเวลาที่กำหนด ให้รอ
-        if time_since_last_request < request_interval:
-            wait_time = request_interval - time_since_last_request
-            print(f"⏳ Waiting {wait_time:.2f} seconds before next API call...")
-            time.sleep(wait_time)
+    #     # ✅ ถ้ายังไม่ถึงเวลาที่กำหนด ให้รอ
+    #     if time_since_last_request < request_interval:
+    #         wait_time = request_interval - time_since_last_request
+    #         print(f"⏳ Waiting {wait_time:.2f} seconds before next API call...")
+    #         time.sleep(wait_time)
 
-        url = f"{full_url}"
+    #     url = f"{full_url}"
         
-        try:
-            response = requests.get(url, params=params)
-            response.raise_for_status()
-            self.last_request_time = time.time() # บันทึกเวลาล่าสุดที่เรียก API
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"❌ API Request failed: {e}")
-            return None
+    #     try:
+    #         response = requests.get(url, params=params)
+    #         response.raise_for_status()
+    #         self.last_request_time = time.time() # บันทึกเวลาล่าสุดที่เรียก API
+    #         return response.json()
+    #     except requests.exceptions.RequestException as e:
+    #         print(f"❌ API Request failed: {e}")
+    #         return None
