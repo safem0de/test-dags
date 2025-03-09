@@ -11,13 +11,15 @@ from airflow.utils import timezone
 conn_id = "0_postgres_db"
 api_url = Variable.get("air_quality_url")
 api_key = Variable.get("air_quality_key_db")
+api_key2 = Variable.get("air_quality_key_dwh")
+api_keys = [api_key, api_key2]
 dag_file_path = "/opt/airflow/dags/"
 
 state_file_name = "state_master.json"
 
 # เรียกใช้ service ที่จำเป็น
 cms = CommonServices()
-aqi_db = AirQualityDatabase(conn_id, api_url, api_key, dag_file_path)
+aqi_db = AirQualityDatabase(conn_id, api_url, api_keys, dag_file_path)
 
 def _create_aqi_database():
     aqi_db.create_aqi_database()

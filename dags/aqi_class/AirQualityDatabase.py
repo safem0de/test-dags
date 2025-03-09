@@ -7,16 +7,13 @@ from dags.aqi_class.CommonServices import CommonServices
 class AirQualityDatabase:
     """Class สำหรับจัดการ Database, API และการสร้างไฟล์ JSON"""
 
-    def __init__(self, conn_id: str, api_url: str, api_key: str, dag_file_path: str):
+    def __init__(self, conn_id: str, api_url: str, api_keys: list, dag_file_path: str):
         self.conn_id = conn_id
         self.api_url = api_url
-        self.api_key = api_key
+        self.api_keys = api_keys
         self.dag_file_path = dag_file_path
-        self.apis = ApiServices()
+        self.apis = ApiServices(self.api_keys)
         self.cms = CommonServices()
-        
-        print(f"API Url: {self.api_url}")
-        print(f"API Key: {self.api_key[:3]}******{self.api_key[-3:]}")
 
 
     # ✅ สร้างฐานข้อมูล AQI ถ้ายังไม่มี
@@ -101,15 +98,15 @@ class AirQualityDatabase:
             print(f"✅ File '{file_path}' already exists. Skipping API call.")
             return
 
+        # ไม่ต้องใส่ API key เด๊ยว fetch api จัดให้
         params = {
             "country": "thailand",
-            "key": self.api_key
         }
 
         endpoint="v2/states"
         full_url = f"{self.api_url}{endpoint}"
 
-        data = self.apis.fetch_api(full_url=full_url, api_key=self.api_key, params=params)
+        data = self.apis.fetch_api(full_url=full_url, api_key=self.api_keys, params=params)
         print(data)
 
         self.cms.create_file_if_not_exist(file_path=file_path, data=data)
@@ -125,16 +122,16 @@ class AirQualityDatabase:
             print(f"✅ File '{file_path}' already exists. Skipping API call.")
             return
 
+        # ไม่ต้องใส่ API key เด๊ยว fetch api จัดให้
         params = {
             "state": state_name,
-            "country": "thailand",
-            "key": self.api_key
+            "country": "thailand"
         }
 
         endpoint="v2/cities"
         full_url = f"{self.api_url}{endpoint}"
 
-        data = self.apis.fetch_api(full_url=full_url, api_key=self.api_key, params=params)
+        data = self.apis.fetch_api(full_url=full_url, api_key=self.api_keys, params=params)
         print(data)
 
         self.cms.create_file_if_not_exist(file_path=file_path, data=data)
