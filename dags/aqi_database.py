@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
 from dags.aqi_class.CommonServices import CommonServices
 from airflow import DAG
@@ -89,6 +90,10 @@ with DAG(
     get_city_data = PythonOperator(
         task_id="get_city_data",
         python_callable=_get_city_data,
+        retries=3,                              # ✅ ลองใหม่ 3 ครั้งถ้าล้มเหลว
+        retry_delay=timedelta(seconds=20),      # ✅ รอ 20 sec ก่อน retry
+        execution_timeout=timedelta(minutes=10),  # ✅ จำกัดเวลาทำงาน Task
+        depends_on_past=True  # ✅ ต้องรอ Task ก่อนหน้าสำเร็จก่อนจึงทำงาน
     )
 
     generate_state_city_region_csv = PythonOperator(
