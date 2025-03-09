@@ -9,6 +9,7 @@ class ApiServices:
         self.api_call_tracker = {key: [] for key in api_keys}   # ✅ เก็บ timestamp ของแต่ละ API Key
         self.current_key = next(self.api_keys)                  # ✅ เริ่มต้นที่ Key แรก
 
+
     def _get_available_key(self):
         """✅ ตรวจสอบว่า API Key ไหนพร้อมใช้งาน"""
         current_time = time.time()
@@ -26,6 +27,7 @@ class ApiServices:
         print(f"⏳ All API Keys reached limit! Waiting {wait_time:.2f} seconds...")
         time.sleep(wait_time)
         return self._get_available_key()  # ✅ ลองใหม่หลังจากรอ
+
 
     def fetch_api(self, full_path_url, params=None):
         """✅ ดึงข้อมูล API โดยเลือก Key ที่พร้อมใช้งาน"""
