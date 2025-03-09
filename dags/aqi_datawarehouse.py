@@ -32,10 +32,10 @@ def _get_state_data():
     aqi_dwh.get_state_data()
 
 with DAG(
-    "airquality_database",
+    "airquality_datawarehouse",
     schedule=None,
     start_date=timezone.datetime(2025, 3, 8),
-    tags=["capstone","database"]
+    tags=["capstone","datawarehouse"]
 ):
     start = EmptyOperator(task_id="start")
     end = EmptyOperator(task_id="end")
