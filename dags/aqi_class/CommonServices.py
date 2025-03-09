@@ -11,7 +11,7 @@ class CommonServices:
     def __init__(self):
         self.last_request_time = 0
 
-    def map_region(self, state):
+    def map_region(self, state:str):
         """
         คืนค่าภาค (region) ตามชื่อจังหวัด
         เหนือ	    North
@@ -79,7 +79,7 @@ class CommonServices:
             return []
 
     # ✅ ตรวจสอบ Connection ของ Database
-    def check_conn_string(self, conn_id):
+    def check_conn_string(self, conn_id:str) -> bool:
         try:
             pg_hook = PostgresHook(postgres_conn_id=conn_id)
             connection = pg_hook.get_conn()
@@ -93,7 +93,7 @@ class CommonServices:
             return False
     
 
-    def create_database(self, conn_id, database_name):
+    def create_database(self, conn_id:str, database_name:str):
         self.check_conn_string(conn_id)
         pg_hook = PostgresHook(postgres_conn_id=conn_id)
         connection = pg_hook.get_conn()
@@ -112,9 +112,9 @@ class CommonServices:
 
 
     # ✅ Execute SQL Query
-    def execute_sql(self, database_name: str, sql_statement: str):
+    def execute_sql(self, conn_id:str, database_name:str, sql_statement:str) -> None:
         try:
-            pg_hook = PostgresHook(postgres_conn_id=self.conn_id, database=database_name)
+            pg_hook = PostgresHook(postgres_conn_id=conn_id, database=database_name)
             connection = pg_hook.get_conn()
             cursor = connection.cursor()
             cursor.execute(sql_statement)
@@ -127,7 +127,7 @@ class CommonServices:
 
 
     # ✅ สร้างไฟล์ JSON ถ้ายังไม่มี
-    def create_file_if_not_exist(self, filename: str, data: dict):
+    def create_file_if_not_exist(self, filename: str, data: dict) -> None:
         file_path = os.path.join(self.dag_file_path, filename)
         
         if not isinstance(data, dict):  # ตรวจสอบว่า data เป็น dict
