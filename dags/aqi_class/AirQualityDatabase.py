@@ -43,6 +43,7 @@ class AirQualityDatabase:
 
     # ✅ สร้างตาราง location
     def create_aqi_table_location(self):
+        print("🔰 Start create table location")
         sql = """
             CREATE TABLE IF NOT EXISTS location (
                 location_id SERIAL PRIMARY KEY,
@@ -64,6 +65,7 @@ class AirQualityDatabase:
 
     # ✅ สร้างตาราง aqi_data
     def create_aqi_table_aqi_data(self):
+        print("🔰 Start create table aqi_data")
         sql = """
             CREATE TABLE IF NOT EXISTS aqi_data (
                 aqi_id SERIAL PRIMARY KEY,
@@ -85,6 +87,7 @@ class AirQualityDatabase:
 
     # ✅ สร้างตาราง weather_data
     def create_aqi_table_weather_data(self):
+        print("🔰 Start create table weather_data")
         sql = """
             CREATE TABLE IF NOT EXISTS weather_data (
                 weather_id SERIAL PRIMARY KEY,
