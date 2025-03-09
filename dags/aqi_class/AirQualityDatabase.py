@@ -37,8 +37,8 @@ class AirQualityDatabase:
         
         # connection.close()
         # print("✅ Database 'aqi_database' is ready!")
-        database_name = "aqi_database"
-        self.cms.create_database(self.conn_id, database_name)
+        self.database_name = "aqi_database"
+        self.cms.create_database(self.conn_id, self.database_name)
 
 
     # ✅ สร้างตาราง location
