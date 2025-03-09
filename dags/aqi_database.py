@@ -1,7 +1,6 @@
 import os
-import time
-
 from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
+from dags.aqi_class.CommonServices import CommonServices
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
@@ -11,13 +10,14 @@ from airflow.utils import timezone
 # ตั้งค่าพารามิเตอร์
 conn_id = "0_postgres_db"
 api_url = Variable.get("air_quality_url")
-api_key = Variable.get("air_quality_key")
+api_key = Variable.get("air_quality_key_db")
 dag_file_path = "/opt/airflow/dags/"
 
 state_file_name = "state_master.json"
 
 # สร้าง Object สำหรับใช้งาน
 aqi_db = AirQualityDatabase(conn_id, api_url, api_key, dag_file_path)
+cms = CommonServices()
 
 def _create_aqi_database():
     aqi_db.create_aqi_database()
@@ -43,7 +43,7 @@ def _get_city_data():
         print(f"❌ Error: File '{file_path}' not found.")
         return
 
-    state_list = aqi_db.json_to_list(file_path, "data", "state")
+    state_list = cms.json_to_list(file_path, "data", "state")
     for st in state_list:
         aqi_db.get_city_data(st)
 
