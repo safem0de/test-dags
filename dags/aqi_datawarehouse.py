@@ -53,4 +53,4 @@ with DAG(
 
     end = EmptyOperator(task_id="end")
 
-    start >> create_aqi_datawarehouse >> create_aqi_dim_location >> end
+    start >> create_aqi_datawarehouse >> create_aqi_dim_location >> create_aqi_dim_time >>end
