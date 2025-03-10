@@ -24,7 +24,7 @@ class ApiServices:
     def update_usage(self,memory,key):
         memory[key] += 1
     
-    def check_usage(self,memory,limit=5,wait_time=30):
+    def check_usage(self,memory,limit=5,wait_time=60):
         if all(value >= limit for value in memory.values()):
             print(f"All API keys reached the limit. Waiting {wait_time} seconds...")
             time.sleep(wait_time)  # ✅ Wait for 60 seconds
