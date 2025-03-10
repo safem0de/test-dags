@@ -41,7 +41,7 @@ class AirQualityDatawarehouse:
     def create_aqi_dim_time(self):
         print("🔰 Start create dim time")
         sql = """
-            CREATE TABLE dim_time (
+            CREATE TABLE IF NOT EXISTS dim_time (
                 time_id SERIAL PRIMARY KEY,        -- Unique ID (Auto Increment)
                 date DATE NOT NULL,                -- วันที่ (YYYY-MM-DD)
                 hour INT NOT NULL CHECK (hour BETWEEN 0 AND 23),  -- ชั่วโมง (0-23)
@@ -52,6 +52,40 @@ class AirQualityDatawarehouse:
                 is_weekend BOOLEAN NOT NULL,       -- เป็นวันหยุดสุดสัปดาห์หรือไม่ (TRUE/FALSE)
                 is_holiday BOOLEAN DEFAULT FALSE   -- เป็นวันหยุดพิเศษหรือไม่ (TRUE/FALSE)
             );
+        """
+        self.cms.execute_sql(
+            conn_id=self.conn_id, 
+            database_name="aqi_datawarehouse", 
+            sql_statement=sql
+            )
+    
+
+    def create_aqi_fact_table(self):
+        print("🔰 Start create fact table")
+        sql = """
+            CREATE TABLE fact_air_quality (
+            fact_id SERIAL PRIMARY KEY,         -- Auto-increment
+            time_id INT NOT NULL,               -- FK to dim_time
+            location_id INT NOT NULL,           -- FK to dim_location
+            
+            -- Pollution Data
+            aqius INT NOT NULL,                 -- AQI (US Standard)
+            mainus VARCHAR(10) NOT NULL,        -- Main pollutant (US)
+            aqicn INT NOT NULL,                 -- AQI (China Standard)
+            maincn VARCHAR(10) NOT NULL,        -- Main pollutant (China)
+            
+            -- Weather Data
+            temperature INT NOT NULL,            -- Temperature (°C)
+            pressure INT NOT NULL,               -- Atmospheric Pressure (hPa)
+            humidity INT NOT NULL,               -- Humidity (%)
+            wind_speed NUMERIC(5, 2) NOT NULL,   -- Wind Speed (m/s)
+            wind_direction INT NOT NULL,         -- Wind Direction (°)
+            weather_icon VARCHAR(10) NOT NULL,   -- Weather Condition Icon
+
+            -- Foreign Keys
+            FOREIGN KEY (time_id) REFERENCES dim_time (time_id),
+            FOREIGN KEY (location_id) REFERENCES dim_location (location_id)
+        );
         """
         self.cms.execute_sql(
             conn_id=self.conn_id, 
