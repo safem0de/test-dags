@@ -3,52 +3,60 @@ import time
 import requests
 
 class ApiServices:
-    RESET_TIME = 60  # ⏳ เวลาที่ต้องรอเมื่อ API Key ติด Rate Limit
-    RATE_LIMIT = 5  # 🔹 จำกัดจำนวนครั้งที่ API Key ใช้ได้ก่อนจะติด Rate Limit
 
-    def __init__(self, api_keys):
-        self.api_keys = itertools.cycle(api_keys)  # ✅ หมุน API Key ไปเรื่อยๆ
-        self.api_usage = {key: [] for key in api_keys}  # ✅ บันทึก timestamp ของแต่ละ API Key
-        self.current_key = next(self.api_keys)  # ✅ เริ่มต้นใช้ API Key ตัวแรก
+    def __init__(self, keys:list):
+        self.keys = keys
+        self.api_keys = itertools.cycle(self.keys)
+        self.memory = {key: 0 for key in self.keys}
+        self.current_key = next(self.api_keys)
 
-    def _get_valid_api_key(self):
-        """🔍 เลือก API Key ที่ยังมีโควต้าใช้งานได้"""
-        current_time = time.time()
+    def mask_keys(self,memory:dict,show_digit=2):
+        return {key[:show_digit] + "*******" + key[-show_digit:]: value for key, value in memory.items()}
 
-        for _ in range(len(self.api_usage)):  # ✅ วนลูปเช็ค API Key ทุกตัว
-            timestamps = self.api_usage[self.current_key]
-            # 🔹 ลบ timestamp ที่หมดอายุเกิน RESET_TIME ออก
-            self.api_usage[self.current_key] = [ts for ts in timestamps if current_time - ts < self.RESET_TIME]
+    
+    def mask_key(self,secret:str,show_digit=2):
+        return str(secret[:show_digit] + "*******" + secret[-show_digit:])
+    
+    def reset_usage(self,memory):
+        for key in memory:
+            memory[key] = 0
 
-            if len(self.api_usage[self.current_key]) < self.RATE_LIMIT:
-                return self.current_key  # ✅ ใช้ API Key นี้ได้
-            else:
-                print(f"⏳ API Key {self.current_key} ติด Rate Limit! ลองเปลี่ยนไปใช้ API Key อื่น...")
-                self.current_key = next(self.api_keys)  # 🔁 เปลี่ยนไปใช้ API Key ถัดไป
+    def update_usage(memory,key):
+        memory[key] += 1
+    
+    def check_usage(self,memory,limit=5,wait_time=30):
+        if all(value >= limit for value in memory.values()):
+            print(f"All API keys reached the limit. Waiting {wait_time} seconds...")
+            time.sleep(wait_time)  # ✅ Wait for 60 seconds
+            self.reset_usage(memory)
 
-        print("⚠️ ไม่มี API Key ที่ใช้งานได้! ต้องรอ 60 วินาที...")
-        time.sleep(self.RESET_TIME)  # ❗ รอ 60 วินาที แล้วลองใหม่
-        return self._get_valid_api_key()
+        current_key = next(self.api_keys)
+        print(self.mask_key(current_key))
+        return current_key
+        
 
     def fetch_api(self, url:str ,params:dict = None):
-        """🌍 เรียก API พร้อมจัดการ Rate Limit & Error"""
-        while True:
-            self.current_key = self._get_valid_api_key()  # ✅ ใช้ API Key ที่ใช้ได้
+        print(f"🌐 ใช้ API Key: {self.mask_key(self.current_key)} | Request: {url}")
+        params["key"] = self.current_key
+        response = requests.get(url, params)
 
-            print(f"🌐 ใช้ API Key: {self.current_key} | Request: {url}")
-            params["key"] = self.current_key
-            response = requests.get(url, params)
-
-            if response.status_code == 200:
-                print(f"✅ สำเร็จ! Data: {response.json()}")
-                self.api_usage[self.current_key].append(time.time())  # ✅ บันทึก timestamp
-                return response.json()
-            elif response.status_code == 400:
-                print(f"❌ API Error 400: Bad Request! ลองเช็คพารามิเตอร์")
-                return None
-            elif response.status_code == 429:
-                print(f"⏳ API Key {self.current_key} ติด Rate Limit! เปลี่ยนไปใช้ API Key อื่น...")
-                self.current_key = next(self.api_keys)  # 🔁 เปลี่ยน API Key แล้วลองใหม่
-            else:
-                print(f"❌ เกิดข้อผิดพลาด: {response.status_code}")
-                return None
+        if response.status_code == 200:
+            print(f"✅ สำเร็จ! Data: {response.json()}")
+            self.update_usage(self.memory,self.current_key)
+            print(self.mask_keys(self.memory))
+            self.check_usage(self.memory,5)
+            return response.json()
+        elif response.status_code == 400:
+            print("❌ ไม่สำเร็จ 400")
+            self.update_usage(self.memory,self.current_key)
+            print(self.mask_keys(self.memory))
+            self.check_usage(self.memory,5)
+            return None
+        elif response.status_code == 429:
+            print("⛔ ไม่สำเร็จ 429")
+            self.update_usage(self.memory,self.current_key)
+            print(self.mask_keys(self.memory))
+            self.check_usage(self.memory,5)
+            return None
+        
+        return None
