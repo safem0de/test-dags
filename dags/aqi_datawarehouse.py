@@ -19,17 +19,14 @@ cms = CommonServices()
 def _create_aqi_datawarehouse():
     aqi_dwh.create_aqi_datawarehouse()
 
-def _create_aqi_table_location():
-    aqi_dwh.create_aqi_table_location()
+def _create_aqi_dim_location():
+    aqi_dwh.create_aqi_dim_location()
 
-def _create_aqi_table_aqi_data():
+def _create_aqi_dim_time():
     aqi_dwh.create_aqi_table_aqi_data()
 
-def _create_aqi_table_weather_data():
+def _create_aqi_fact__table():
     aqi_dwh.create_aqi_table_weather_data()
-
-def _get_state_data():
-    aqi_dwh.get_state_data()
 
 with DAG(
     "airquality_datawarehouse",
@@ -38,6 +35,17 @@ with DAG(
     tags=["capstone","datawarehouse"]
 ):
     start = EmptyOperator(task_id="start")
+
+    create_aqi_datawarehouse = PythonOperator(
+        task_id="create_aqi_datawarehouse",
+        python_callable=_create_aqi_datawarehouse,
+    )
+
+    create_aqi_dim_location = PythonOperator(
+        task_id="create_aqi_dim_location",
+        python_callable=_create_aqi_dim_location,
+    )
+
     end = EmptyOperator(task_id="end")
 
     start >> end

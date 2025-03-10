@@ -16,18 +16,23 @@ class AirQualityDatawarehouse:
         self.cms = CommonServices()
 
     def create_aqi_datawarehouse(self):
-        self.cms.check_conn_string()
-        pg_hook = PostgresHook(postgres_conn_id=self.conn_id)
-        connection = pg_hook.get_conn()
-        connection.set_isolation_level(0)
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT 1 FROM pg_database WHERE datname = 'aqi_datawarehouse';")
-        exists = cursor.fetchone()
-        
-        if not exists:
-            cursor.execute("CREATE DATABASE aqi_datawarehouse;")
-            connection.commit()
-        
-        connection.close()
-        print("✅ Database 'aqi_datawarehouse' is ready!")
+        self.database_name = "aqi_datawarehouse"
+        self.cms.create_database(self.conn_id, self.database_name)
+    
+    def create_aqi_dim_location(self):
+        print("🔰 Start create dim location")
+        sql = """
+            CREATE TABLE IF NOT EXISTS location (
+                location_id SERIAL PRIMARY KEY,
+                city VARCHAR(255) NOT NULL,
+                state VARCHAR(255) NOT NULL,
+                country VARCHAR(50) DEFAULT 'Thailand',
+                region VARCHAR(255) NOT NULL,
+                UNIQUE (city, state, country, region)
+            );
+        """
+        self.cms.execute_sql(
+            conn_id=self.conn_id, 
+            database_name="aqi_datawarehouse", 
+            sql_statement=sql
+            )
