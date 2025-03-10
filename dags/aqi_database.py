@@ -1,4 +1,4 @@
-import os
+import os, time
 from datetime import timedelta
 from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
 from dags.aqi_class.CommonServices import CommonServices
@@ -36,6 +36,7 @@ def _create_aqi_table_weather_data():
 
 def _get_state_data():
     aqi_db.get_state_data()
+    time.sleep(60) # reset api key
 
 def _get_city_data():
     # ✅ สร้าง path ให้ถูกต้อง
