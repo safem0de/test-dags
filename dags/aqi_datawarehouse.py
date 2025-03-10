@@ -23,7 +23,7 @@ def _create_aqi_dim_location():
     aqi_dwh.create_aqi_dim_location()
 
 def _create_aqi_dim_time():
-    aqi_dwh.create_aqi_table_aqi_data()
+    aqi_dwh.create_aqi_dim_time()
 
 def _create_aqi_fact__table():
     aqi_dwh.create_aqi_table_weather_data()
@@ -44,6 +44,11 @@ with DAG(
     create_aqi_dim_location = PythonOperator(
         task_id="create_aqi_dim_location",
         python_callable=_create_aqi_dim_location,
+    )
+
+    create_aqi_dim_time = PythonOperator(
+        task_id="create_aqi_dim_time",
+        python_callable=_create_aqi_dim_time,
     )
 
     end = EmptyOperator(task_id="end")

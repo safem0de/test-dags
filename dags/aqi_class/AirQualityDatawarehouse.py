@@ -22,13 +22,35 @@ class AirQualityDatawarehouse:
     def create_aqi_dim_location(self):
         print("🔰 Start create dim location")
         sql = """
-            CREATE TABLE IF NOT EXISTS location (
+            CREATE TABLE IF NOT EXISTS dim_location (
                 location_id SERIAL PRIMARY KEY,
                 city VARCHAR(255) NOT NULL,
                 state VARCHAR(255) NOT NULL,
                 country VARCHAR(50) DEFAULT 'Thailand',
                 region VARCHAR(255) NOT NULL,
                 UNIQUE (city, state, country, region)
+            );
+        """
+        self.cms.execute_sql(
+            conn_id=self.conn_id, 
+            database_name="aqi_datawarehouse", 
+            sql_statement=sql
+            )
+
+
+    def create_aqi_dim_time(self):
+        print("🔰 Start create dim time")
+        sql = """
+            CREATE TABLE dim_time (
+                time_id SERIAL PRIMARY KEY,        -- Unique ID (Auto Increment)
+                date DATE NOT NULL,                -- วันที่ (YYYY-MM-DD)
+                hour INT NOT NULL CHECK (hour BETWEEN 0 AND 23),  -- ชั่วโมง (0-23)
+                day_of_week VARCHAR(10) NOT NULL,  -- ชื่อวันในสัปดาห์ (Monday, Tuesday, etc.)
+                month_name VARCHAR(10) NOT NULL,   -- ชื่อเดือน (January, February, etc.)
+                quarter INT NOT NULL CHECK (quarter BETWEEN 1 AND 4), -- ไตรมาส (1-4)
+                week_of_year INT NOT NULL CHECK (week_of_year BETWEEN 1 AND 53), -- สัปดาห์ของปี
+                is_weekend BOOLEAN NOT NULL,       -- เป็นวันหยุดสุดสัปดาห์หรือไม่ (TRUE/FALSE)
+                is_holiday BOOLEAN DEFAULT FALSE   -- เป็นวันหยุดพิเศษหรือไม่ (TRUE/FALSE)
             );
         """
         self.cms.execute_sql(
