@@ -30,9 +30,9 @@ class ApiServices:
             time.sleep(wait_time)  # ✅ Wait for 60 seconds
             self.reset_usage(memory)
 
-        current_key = next(self.api_keys)
-        print(self.mask_key(current_key))
-        return current_key
+        self.current_key = next(self.api_keys)
+        print(self.mask_key(self.current_key))
+        return self.current_key
         
 
     def fetch_api(self, url:str ,params:dict = None):
