@@ -21,7 +21,7 @@ class ApiServices:
         for key in memory:
             memory[key] = 0
 
-    def update_usage(memory,key):
+    def update_usage(self,memory,key):
         memory[key] += 1
     
     def check_usage(self,memory,limit=5,wait_time=30):
