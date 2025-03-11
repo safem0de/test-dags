@@ -82,4 +82,4 @@ with DAG(
 
     end = EmptyOperator(task_id="end")
 
-    start >> check_master_data >> check_master_data >> end
+    start >> check_master_data >> get_hourly_data >> end
