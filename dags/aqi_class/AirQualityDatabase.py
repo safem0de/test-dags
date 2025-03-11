@@ -48,7 +48,7 @@ class AirQualityDatabase:
     def create_table_aqi_rawdata(self):
         print("🔰 Start create table air_quality_raw")
         sql = """
-            CREATE TABLE air_quality_raw (
+            CREATE TABLE IF NOT EXISTS air_quality_raw (
                 aqi_id SERIAL PRIMARY KEY,
                 city VARCHAR(255) NOT NULL,
                 state VARCHAR(255) NOT NULL,
