@@ -1,4 +1,5 @@
 import csv
+import datetime
 import json
 import os
 from dags.aqi_class.ApiServices import ApiServices
@@ -189,34 +190,34 @@ class AirQualityDatabase:
             state, city, region = master_data
 
             # ✅ Extract ข้อมูลจาก JSON อย่างปลอดภัย
-            pollution = data.get("data", {}).get("current", {}).get("pollution", {})
-            weather = data.get("data", {}).get("current", {}).get("weather", {})
+            if "current" not in data or "pollution" not in data["current"] or "weather" not in data["current"]:
+                print(f"⚠️ ข้อมูลจาก API ไม่สมบูรณ์: {data}")
+                return
 
-            # ✅ ตรวจสอบค่าและกำหนดค่าเริ่มต้นถ้าหากไม่มีข้อมูล
-            aqius = pollution.get("aqius", None)
-            mainus = pollution.get("mainus", None)
-            aqicn = pollution.get("aqicn", None)
-            maincn = pollution.get("maincn", None)
-            temperature = weather.get("tp", None)
-            pressure = weather.get("pr", None)
-            humidity = weather.get("hu", None)
-            wind_speed = weather.get("ws", None)
-            wind_direction = weather.get("wd", None)
+            # ✅ ดึงค่า AQI และ Weather จาก API
+            pollution_data = data["current"]["pollution"]
+            weather_data = data["current"]["weather"]
+            location_data = data["location"]["coordinates"]
+
+            timestamp = datetime.datetime.strptime(pollution_data["ts"], "%Y-%m-%dT%H:%M:%S.000Z")
 
             # ✅ SQL Query
             sql = """
-                INSERT INTO air_quality_raw 
-                (location_id, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction)
-                VALUES (
-                    (SELECT COALESCE((SELECT location_id FROM location WHERE city = %s AND state = %s LIMIT 1), 0)),
-                    NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s
-                );
+            INSERT INTO air_quality_raw 
+            (city, state, region, country, latitude, longitude, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction)
+            VALUES (%s, %s, %s, 'Thailand', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
             """
 
             # ✅ กำหนดค่า Params
             params = (
-                city, state, aqius, mainus, aqicn, maincn, 
-                temperature, pressure, humidity, wind_speed, wind_direction
+                city, state, region,
+                location_data[0], location_data[1],  # ✅ Latitude, Longitude
+                timestamp,
+                pollution_data["aqius"], pollution_data["mainus"],
+                pollution_data["aqicn"], pollution_data["maincn"],
+                weather_data["tp"], weather_data["pr"],
+                weather_data["hu"], weather_data["ws"],
+                weather_data["wd"]
             )
 
             # ✅ บันทึกข้อมูลลงฐานข้อมูล
