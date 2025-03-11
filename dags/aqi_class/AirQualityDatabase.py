@@ -181,22 +181,49 @@ class AirQualityDatabase:
     def insert_hourly_job(self, master_data, data):
         print("🔰 Start insert table air_quality_raw")
 
-        state, city, region = master_data
-        sql = """
-            INSERT INTO air_quality_raw 
-            (location_id, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction, region)
-            VALUES (
-                (SELECT COALESCE((SELECT location_id FROM location WHERE city = %s AND state = %s), 0)),
-                NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-            );
-        """
-        params = (city, state, data["aqius"], data["mainus"], 
-              data["aqicn"], data["maincn"], data["temperature"], data["pressure"], 
-              data["humidity"], data["wind_speed"], data["wind_direction"], region)
-        
-        self.cms.execute_sql(
-            conn_id=self.conn_id, 
-            database_name="aqi_database", 
-            sql_statement=sql,
-            parameters=params
+        try:
+            state, city, region = master_data
+
+            # ✅ Extract ข้อมูลจาก JSON อย่างปลอดภัย
+            pollution = data.get("data", {}).get("current", {}).get("pollution", {})
+            weather = data.get("data", {}).get("current", {}).get("weather", {})
+
+            # ✅ ตรวจสอบค่าและกำหนดค่าเริ่มต้นถ้าหากไม่มีข้อมูล
+            aqius = pollution.get("aqius", None)
+            mainus = pollution.get("mainus", None)
+            aqicn = pollution.get("aqicn", None)
+            maincn = pollution.get("maincn", None)
+            temperature = weather.get("tp", None)
+            pressure = weather.get("pr", None)
+            humidity = weather.get("hu", None)
+            wind_speed = weather.get("ws", None)
+            wind_direction = weather.get("wd", None)
+
+            # ✅ SQL Query
+            sql = """
+                INSERT INTO air_quality_raw 
+                (location_id, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction, region)
+                VALUES (
+                    (SELECT COALESCE((SELECT location_id FROM location WHERE city = %s AND state = %s LIMIT 1), 0)),
+                    NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                );
+            """
+
+            # ✅ กำหนดค่า Params
+            params = (
+                city, state, aqius, mainus, aqicn, maincn, 
+                temperature, pressure, humidity, wind_speed, wind_direction, region
             )
+
+            # ✅ บันทึกข้อมูลลงฐานข้อมูล
+            self.cms.execute_sql(
+                conn_id=self.conn_id, 
+                database_name="aqi_database", 
+                sql_statement=sql,
+                parameters=params
+            )
+
+            print(f"✅ บันทึก AQI สำเร็จ: {city}, {state}, {region}")
+
+        except Exception as e:
+            print(f"❌ เกิดข้อผิดพลาดระหว่าง Insert AQI Data: {str(e)}")

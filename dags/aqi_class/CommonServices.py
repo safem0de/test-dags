@@ -200,8 +200,6 @@ class CommonServices:
 
         # ✅ เพิ่มข้อมูล Duplicates เป็นแถวใหม่
         quality_report = pd.concat([quality_report, duplicate_count.to_frame().T])
-
         print("✅ การตรวจสอบเสร็จสิ้น!")
-        
         return quality_report
         
