@@ -183,27 +183,51 @@ class AirQualityDatabase:
         print(f"✅ File saved: {output_file}")
 
 
-    def insert_hourly_job(self, master_data, data):
+    def insert_hourly_job(self, master_data, api_data):
+        """บันทึกข้อมูล AQI และ Weather ลงฐานข้อมูล"""
+
         print("🔰 Start insert table air_quality_raw")
 
         try:
+            # ✅ แยกค่าจาก master_data
             state, city, region = master_data
+
+            # ✅ ตรวจสอบว่า API Data มีค่า `current`
+            if "status" not in api_data or api_data["status"] != "success":
+                print(f"⚠️ API ส่งข้อมูลผิดพลาด: {api_data}")
+                return
+
+            if "data" not in api_data or not api_data["data"]:
+                print(f"⚠️ API ไม่มีข้อมูลเมืองนี้: {city}, {state}")
+                return
+
+            data = api_data["data"]
+
+            # ✅ ตรวจสอบ `current` ว่ามีข้อมูลหรือไม่
+            if "current" not in data or not data["current"]:
+                print(f"⚠️ ข้อมูลจาก API ไม่สมบูรณ์: ไม่มี 'current' → {data}")
+                return
+
+            if "pollution" not in data["current"] or "weather" not in data["current"]:
+                print(f"⚠️ ข้อมูล API ขาด pollution หรือ weather → {data}")
+                return
 
             # ✅ ดึงค่า AQI และ Weather จาก API
             pollution_data = data["current"]["pollution"]
             weather_data = data["current"]["weather"]
-            location_data = data["location"]["coordinates"]
+            location_data = data["location"]["coordinates"] if "location" in data and "coordinates" in data["location"] else (None, None)
 
+            # ✅ แปลง timestamp เป็น datetime ที่ใช้งานได้ใน SQL
             timestamp = datetime.datetime.strptime(pollution_data["ts"], "%Y-%m-%dT%H:%M:%S.000Z")
 
-            # ✅ SQL Query
+            # ✅ สร้าง SQL สำหรับ INSERT ข้อมูล
             sql = """
-            INSERT INTO air_quality_raw 
-            (city, state, region, country, latitude, longitude, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction)
-            VALUES (%s, %s, %s, 'Thailand', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                INSERT INTO air_quality_raw 
+                (city, state, region, country, latitude, longitude, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction)
+                VALUES (%s, %s, %s, 'Thailand', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
             """
 
-            # ✅ กำหนดค่า Params
+            # ✅ กำหนดค่า parameters ให้ตรงกับโครงสร้าง API
             params = (
                 city, state, region,
                 location_data[0], location_data[1],  # ✅ Latitude, Longitude
@@ -215,7 +239,7 @@ class AirQualityDatabase:
                 weather_data["wd"]
             )
 
-            # ✅ บันทึกข้อมูลลงฐานข้อมูล
+            # ✅ Insert ข้อมูลลงฐานข้อมูล
             self.cms.execute_sql(
                 conn_id=self.conn_id, 
                 database_name="aqi_database", 
@@ -226,4 +250,4 @@ class AirQualityDatabase:
             print(f"✅ บันทึก AQI สำเร็จ: {city}, {state}, {region}")
 
         except Exception as e:
-            print(f"❌ เกิดข้อผิดพลาดระหว่าง Insert AQI Data: {str(e)}")
+            print(f"❌ Error inserting data for {city}, {state}: {e}")
