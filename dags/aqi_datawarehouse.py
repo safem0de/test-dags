@@ -19,8 +19,8 @@ cms = CommonServices()
 def _create_aqi_datawarehouse():
     aqi_dwh.create_aqi_datawarehouse()
 
-# def _create_aqi_dim_location():
-#     aqi_dwh.create_aqi_dim_location()
+def _create_aqi_dim_location():
+    aqi_dwh.create_aqi_dim_location()
 
 def _create_aqi_dim_time():
     aqi_dwh.create_aqi_dim_time()
@@ -41,10 +41,10 @@ with DAG(
         python_callable=_create_aqi_datawarehouse,
     )
 
-    # create_aqi_dim_location = PythonOperator(
-    #     task_id="create_aqi_dim_location",
-    #     python_callable=_create_aqi_dim_location,
-    # )
+    create_aqi_dim_location = PythonOperator(
+        task_id="create_aqi_dim_location",
+        python_callable=_create_aqi_dim_location,
+    )
 
     create_aqi_dim_time = PythonOperator(
         task_id="create_aqi_dim_time",

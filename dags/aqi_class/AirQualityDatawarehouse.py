@@ -19,23 +19,23 @@ class AirQualityDatawarehouse:
         self.database_name = "aqi_datawarehouse"
         self.cms.create_database(self.conn_id, self.database_name)
     
-    # def create_aqi_dim_location(self):
-    #     print("🔰 Start create dim location")
-    #     sql = """
-    #         CREATE TABLE IF NOT EXISTS dim_location (
-    #             location_id SERIAL PRIMARY KEY,
-    #             city VARCHAR(255) NOT NULL,
-    #             state VARCHAR(255) NOT NULL,
-    #             country VARCHAR(50) DEFAULT 'Thailand',
-    #             region VARCHAR(255) NOT NULL,
-    #             UNIQUE (city, state, country, region)
-    #         );
-    #     """
-    #     self.cms.execute_sql(
-    #         conn_id=self.conn_id, 
-    #         database_name="aqi_datawarehouse", 
-    #         sql_statement=sql
-    #         )
+    def create_aqi_dim_location(self):
+        print("🔰 Start create dim location")
+        sql = """
+            CREATE TABLE IF NOT EXISTS dim_location (
+                location_id SERIAL PRIMARY KEY,
+                city VARCHAR(255) NOT NULL,
+                state VARCHAR(255) NOT NULL,
+                country VARCHAR(50) DEFAULT 'Thailand',
+                region VARCHAR(255) NOT NULL,
+                UNIQUE (city, state, country, region)
+            );
+        """
+        self.cms.execute_sql(
+            conn_id=self.conn_id, 
+            database_name="aqi_datawarehouse", 
+            sql_statement=sql
+            )
 
 
     def create_aqi_dim_time(self):
