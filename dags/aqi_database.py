@@ -25,8 +25,8 @@ aqi_db = AirQualityDatabase(conn_id, api_url, api_keys, dag_file_path)
 def _create_aqi_database():
     aqi_db.create_aqi_database()
 
-def _create_aqi_table_location():
-    aqi_db.create_aqi_table_location()
+# def _create_aqi_table_location():
+#     aqi_db.create_aqi_table_location()
 
 def _create_table_aqi_rawdata():
     aqi_db.create_table_aqi_rawdata()
@@ -70,10 +70,10 @@ with DAG(
         python_callable=_create_aqi_database,
     )
 
-    create_aqi_table_location = PythonOperator(
-        task_id="create_aqi_table_location",
-        python_callable=_create_aqi_table_location,
-    )
+    # create_aqi_table_location = PythonOperator(
+    #     task_id="create_aqi_table_location",
+    #     python_callable=_create_aqi_table_location,
+    # )
 
     create_table_aqi_rawdata = PythonOperator(
         task_id="create_table_aqi_rawdata",
@@ -101,5 +101,5 @@ with DAG(
 
     end = EmptyOperator(task_id="end")
 
-    start >> create_aqi_database >> create_aqi_table_location >> create_table_aqi_rawdata >> end
+    start >> create_aqi_database >> create_table_aqi_rawdata >> end
     start >> get_state_data >> get_city_data >> generate_state_city_region_csv >> end

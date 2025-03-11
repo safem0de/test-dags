@@ -22,36 +22,41 @@ class AirQualityDatabase:
         self.cms.create_database(self.conn_id, self.database_name)
 
 
-    # ✅ สร้างตาราง location
-    def create_aqi_table_location(self):
-        print("🔰 Start create table location")
-        sql = """
-            CREATE TABLE IF NOT EXISTS location (
-                location_id SERIAL PRIMARY KEY,
-                city VARCHAR(255) NOT NULL,
-                state VARCHAR(255) NOT NULL,
-                country VARCHAR(50) DEFAULT 'Thailand',
-                latitude DECIMAL(10, 6),
-                longitude DECIMAL(10, 6),
-                region VARCHAR(255) NOT NULL,
-                UNIQUE (city, state, country)
-            );
-        """
-        self.cms.execute_sql(
-            conn_id=self.conn_id, 
-            database_name="aqi_database", 
-            sql_statement=sql
-            )
+    # # ✅ สร้างตาราง location
+    # def create_aqi_table_location(self):
+    #     print("🔰 Start create table location")
+    #     sql = """
+    #         CREATE TABLE IF NOT EXISTS location (
+    #             location_id SERIAL PRIMARY KEY,
+    #             city VARCHAR(255) NOT NULL,
+    #             state VARCHAR(255) NOT NULL,
+    #             country VARCHAR(50) DEFAULT 'Thailand',
+    #             latitude DECIMAL(10, 6),
+    #             longitude DECIMAL(10, 6),
+    #             region VARCHAR(255) NOT NULL,
+    #             UNIQUE (city, state, country)
+    #         );
+    #     """
+    #     self.cms.execute_sql(
+    #         conn_id=self.conn_id, 
+    #         database_name="aqi_database", 
+    #         sql_statement=sql
+    #         )
 
 
     # ✅ สร้างตาราง aqi_data
     def create_table_aqi_rawdata(self):
-        print("🔰 Start create table aqi_data")
+        print("🔰 Start create table air_quality_raw")
         sql = """
             CREATE TABLE air_quality_raw (
                 aqi_id SERIAL PRIMARY KEY,
-                location_id INT NOT NULL,
-                timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
+                city VARCHAR(255) NOT NULL,
+                state VARCHAR(255) NOT NULL,
+                region VARCHAR(255) NOT NULL,
+                country VARCHAR(50) DEFAULT 'Thailand',
+                latitude DECIMAL(10,6),
+                longitude DECIMAL(10,6),
+                timestamp TIMESTAMP NOT NULL,
                 aqius INT NOT NULL,
                 mainus VARCHAR(10),
                 aqicn INT,
@@ -60,8 +65,7 @@ class AirQualityDatabase:
                 pressure INT,
                 humidity INT,
                 wind_speed DECIMAL(5,2),
-                wind_direction INT,
-                FOREIGN KEY (location_id) REFERENCES location(location_id) ON DELETE CASCADE
+                wind_direction INT
             );
         """
         self.cms.execute_sql(
