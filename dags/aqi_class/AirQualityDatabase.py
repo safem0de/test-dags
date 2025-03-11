@@ -189,11 +189,6 @@ class AirQualityDatabase:
         try:
             state, city, region = master_data
 
-            # ✅ Extract ข้อมูลจาก JSON อย่างปลอดภัย
-            if "current" not in data or "pollution" not in data["current"] or "weather" not in data["current"]:
-                print(f"⚠️ ข้อมูลจาก API ไม่สมบูรณ์: {data}")
-                return
-
             # ✅ ดึงค่า AQI และ Weather จาก API
             pollution_data = data["current"]["pollution"]
             weather_data = data["current"]["weather"]
