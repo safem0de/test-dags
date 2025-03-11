@@ -28,8 +28,8 @@ def _create_aqi_database():
 def _create_aqi_table_location():
     aqi_db.create_aqi_table_location()
 
-def _create_aqi_table_aqi_data():
-    aqi_db.create_aqi_table_aqi_data()
+def _create_table_aqi_rawdata():
+    aqi_db.create_table_aqi_rawdata()
 
 def _create_aqi_table_weather_data():
     aqi_db.create_aqi_table_weather_data()
@@ -75,14 +75,9 @@ with DAG(
         python_callable=_create_aqi_table_location,
     )
 
-    create_aqi_table_aqi_data = PythonOperator(
-        task_id="create_aqi_table_aqi_data",
-        python_callable=_create_aqi_table_aqi_data,
-    )
-
-    create_aqi_table_weather_data = PythonOperator(
-        task_id="create_aqi_table_weather_data",
-        python_callable=_create_aqi_table_weather_data,
+    create_table_aqi_rawdata = PythonOperator(
+        task_id="create_table_aqi_rawdata",
+        python_callable=_create_table_aqi_rawdata,
     )
 
     get_state_data = PythonOperator(
@@ -106,5 +101,5 @@ with DAG(
 
     end = EmptyOperator(task_id="end")
 
-    start >> create_aqi_database >> create_aqi_table_location >> create_aqi_table_aqi_data >> create_aqi_table_weather_data >> end
+    start >> create_aqi_database >> create_aqi_table_location >> create_table_aqi_rawdata >> end
     start >> get_state_data >> get_city_data >> generate_state_city_region_csv >> end

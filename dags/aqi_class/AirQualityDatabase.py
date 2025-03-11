@@ -45,17 +45,22 @@ class AirQualityDatabase:
 
 
     # ✅ สร้างตาราง aqi_data
-    def create_aqi_table_aqi_data(self):
+    def create_table_aqi_rawdata(self):
         print("🔰 Start create table aqi_data")
         sql = """
-            CREATE TABLE IF NOT EXISTS aqi_data (
+            CREATE TABLE air_quality_raw (
                 aqi_id SERIAL PRIMARY KEY,
-                location_id INT,
-                timestamp TIMESTAMP NOT NULL,
-                aqius INT NOT NULL, 
+                location_id INT NOT NULL,
+                timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
+                aqius INT NOT NULL,
                 mainus VARCHAR(10),
                 aqicn INT,
                 maincn VARCHAR(10),
+                temperature DECIMAL(5,2),
+                pressure INT,
+                humidity INT,
+                wind_speed DECIMAL(5,2),
+                wind_direction INT,
                 FOREIGN KEY (location_id) REFERENCES location(location_id) ON DELETE CASCADE
             );
         """
