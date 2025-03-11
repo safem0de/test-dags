@@ -31,8 +31,8 @@ def _create_aqi_table_location():
 def _create_table_aqi_rawdata():
     aqi_db.create_table_aqi_rawdata()
 
-def _create_aqi_table_weather_data():
-    aqi_db.create_aqi_table_weather_data()
+# def _create_aqi_table_weather_data():
+#     aqi_db.create_aqi_table_weather_data()
 
 def _get_state_data():
     aqi_db.get_state_data()

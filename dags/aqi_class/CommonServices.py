@@ -1,5 +1,7 @@
 import json
 import os
+import pandas as pd
+import numpy as np
 
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 
@@ -111,18 +113,25 @@ class CommonServices:
 
 
     # ✅ Execute SQL Query
-    def execute_sql(self, conn_id:str, database_name:str, sql_statement:str) -> None:
+    def execute_sql(self, conn_id:str, database_name:str, sql_statement:str, parameters: tuple = None) -> None:
         try:
             pg_hook = PostgresHook(postgres_conn_id=conn_id, database=database_name)
             connection = pg_hook.get_conn()
             cursor = connection.cursor()
-            cursor.execute(sql_statement)
+
+            if parameters:
+                cursor.execute(sql_statement, parameters)
+            else:
+                cursor.execute(sql_statement)
+
             connection.commit()
-            cursor.close()
-            connection.close()
             print(f"✅ SQL executed successfully on database: {database_name}")
         except Exception as e:
+            connection.rollback()
             print(f"❌ Error executing SQL on {database_name}: {str(e)}")
+        finally:
+            cursor.close()
+            connection.close()
 
 
     # ✅ สร้างไฟล์ JSON ถ้ายังไม่มี
@@ -138,3 +147,59 @@ class CommonServices:
             print(f"✅ File created: {file_path}")
         else:
             print(f"⚠️ File already exists: {file_path}")
+
+
+    def check_file_exists(self, file_path) -> bool:
+        if not os.path.exists(file_path):
+            return False
+        return True
+    
+
+    def check_data_quality(self, df:pd.DataFrame, expected_types:dict) -> pd.DataFrame:
+        """
+        ตรวจสอบคุณภาพข้อมูลใน DataFrame
+        """
+        print("🔍 ตรวจสอบคุณภาพข้อมูล DataFrame...\n")
+        
+        # ✅ ตรวจสอบ Missing Values (ค่า NaN / NULL)
+        missing_values = df.isnull().sum()
+        missing_percentage = (df.isnull().sum() / len(df)) * 100
+
+        # ✅ ตรวจสอบค่าซ้ำซ้อน (Duplicated Rows)
+        duplicate_count = pd.Series(df.duplicated().sum(), index=["Duplicate Count"])
+
+        type_mismatch = {
+            col: df[col].apply(lambda x: not isinstance(x, expected_types.get(col, type(x)))).sum()
+            for col in df.columns if col in expected_types
+        }
+        
+        type_mismatch_series = pd.Series(type_mismatch).fillna(0).astype(int)
+
+        # ✅ ตรวจสอบค่าที่อยู่นอกช่วง (Outliers) สำหรับค่าตัวเลข
+        numerical_columns = df.select_dtypes(include=[np.number]).columns
+        outliers = {}
+        for col in numerical_columns:
+            Q1 = df[col].quantile(0.25)
+            Q3 = df[col].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+            outliers[col] = df[(df[col] < lower_bound) | (df[col] > upper_bound)][col].count()
+
+        outliers_series = pd.Series(outliers).fillna(0).astype(int)
+
+        # ✅ รวมผลลัพธ์ทั้งหมดเป็น DataFrame
+        quality_report = pd.DataFrame({
+            "Missing Values": missing_values,
+            "Missing %": missing_percentage,
+            "Type Mismatch": type_mismatch_series,
+            "Outliers": outliers_series
+        }).fillna(0).astype(int)
+
+        # ✅ เพิ่มข้อมูล Duplicates เป็นแถวใหม่
+        quality_report = pd.concat([quality_report, duplicate_count.to_frame().T])
+
+        print("✅ การตรวจสอบเสร็จสิ้น!")
+        
+        return quality_report
+        

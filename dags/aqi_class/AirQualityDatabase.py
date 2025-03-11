@@ -71,29 +71,6 @@ class AirQualityDatabase:
             )
 
 
-    # ✅ สร้างตาราง weather_data
-    def create_aqi_table_weather_data(self):
-        print("🔰 Start create table weather_data")
-        sql = """
-            CREATE TABLE IF NOT EXISTS weather_data (
-                weather_id SERIAL PRIMARY KEY,
-                location_id INT,
-                timestamp TIMESTAMP NOT NULL,
-                temperature DECIMAL(5,2),
-                pressure INT,
-                humidity INT,
-                wind_speed DECIMAL(5,2),
-                wind_direction INT,
-                FOREIGN KEY (location_id) REFERENCES location(location_id) ON DELETE CASCADE
-            );
-        """
-        self.cms.execute_sql(
-            conn_id=self.conn_id, 
-            database_name="aqi_database", 
-            sql_statement=sql
-            )
-
-
     # ✅ ดึงข้อมูล state (จังหวัด) จาก API และเก็บเป็นไฟล์ JSON
     def get_state_data(self, filename="state_master.json"):
         file_path = os.path.join(self.dag_file_path, filename)
@@ -199,3 +176,27 @@ class AirQualityDatabase:
             writer.writerows(state_city_list)               # ✅ เขียนข้อมูล
 
         print(f"✅ File saved: {output_file}")
+
+
+    def insert_hourly_job(self, master_data, data):
+        print("🔰 Start insert table air_quality_raw")
+
+        state, city, region = master_data
+        sql = """
+            INSERT INTO air_quality_raw 
+            (location_id, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction, region)
+            VALUES (
+                (SELECT COALESCE((SELECT location_id FROM location WHERE city = %s AND state = %s), 0)),
+                NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            );
+        """
+        params = (city, state, data["aqius"], data["mainus"], 
+              data["aqicn"], data["maincn"], data["temperature"], data["pressure"], 
+              data["humidity"], data["wind_speed"], data["wind_direction"], region)
+        
+        self.cms.execute_sql(
+            conn_id=self.conn_id, 
+            database_name="aqi_database", 
+            sql_statement=sql,
+            parameters=params
+            )
