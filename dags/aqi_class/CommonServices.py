@@ -155,7 +155,7 @@ class CommonServices:
         return True
     
 
-    def check_data_quality(self, df:pd.DataFrame, expected_types:dict) -> pd.DataFrame:
+    def check_data_quality(self, df:pd.DataFrame, expected_types:dict = None) -> pd.DataFrame:
         """
         ตรวจสอบคุณภาพข้อมูลใน DataFrame
         """
@@ -168,12 +168,14 @@ class CommonServices:
         # ✅ ตรวจสอบค่าซ้ำซ้อน (Duplicated Rows)
         duplicate_count = pd.Series(df.duplicated().sum(), index=["Duplicate Count"])
 
-        type_mismatch = {
-            col: df[col].apply(lambda x: not isinstance(x, expected_types.get(col, type(x)))).sum()
-            for col in df.columns if col in expected_types
-        }
+        type_mismatch_series = pd.Series(dtype=int)
+        if expected_types:
+            type_mismatch = {
+                col: df[col].apply(lambda x: not isinstance(x, expected_types.get(col, type(x)))).sum()
+                for col in df.columns if col in expected_types
+            }
         
-        type_mismatch_series = pd.Series(type_mismatch).fillna(0).astype(int)
+            type_mismatch_series = pd.Series(type_mismatch).fillna(0).astype(int)
 
         # ✅ ตรวจสอบค่าที่อยู่นอกช่วง (Outliers) สำหรับค่าตัวเลข
         numerical_columns = df.select_dtypes(include=[np.number]).columns
