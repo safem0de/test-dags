@@ -39,6 +39,8 @@ def _check_master_data():
     if quality_report["Missing Values"].sum() > 0 or quality_report["Outliers"].sum() > 0:
         logging.warning("⚠️ พบปัญหาในข้อมูล ตรวจสอบ Data Quality Report")
 
+    logging.info(quality_report)
+
 def _get_hourly_data():
     df = pd.read_csv(file_path)
 

@@ -202,17 +202,17 @@ class AirQualityDatabase:
             # ✅ SQL Query
             sql = """
                 INSERT INTO air_quality_raw 
-                (location_id, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction, region)
+                (location_id, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction)
                 VALUES (
                     (SELECT COALESCE((SELECT location_id FROM location WHERE city = %s AND state = %s LIMIT 1), 0)),
-                    NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s
                 );
             """
 
             # ✅ กำหนดค่า Params
             params = (
                 city, state, aqius, mainus, aqicn, maincn, 
-                temperature, pressure, humidity, wind_speed, wind_direction, region
+                temperature, pressure, humidity, wind_speed, wind_direction
             )
 
             # ✅ บันทึกข้อมูลลงฐานข้อมูล
