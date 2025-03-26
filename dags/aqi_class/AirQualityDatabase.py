@@ -224,7 +224,8 @@ class AirQualityDatabase:
             sql = """
                 INSERT INTO air_quality_raw 
                 (city, state, region, country, latitude, longitude, timestamp, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction)
-                VALUES (%s, %s, %s, 'Thailand', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                VALUES (%s, %s, %s, 'Thailand', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT DO NOTHING;
             """
 
             # ✅ กำหนดค่า parameters ให้ตรงกับโครงสร้าง API
