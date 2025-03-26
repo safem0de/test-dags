@@ -17,10 +17,28 @@ cms = CommonServices()
 def _create_dim_location():
     print("🔰 Ingest dim location")
     sql = """
-    INSERT INTO dim_location (city, state, country, region)
-    SELECT DISTINCT city, state, country, region
-    FROM public.air_quality_raw
+    INSERT  INTO dim_location (city, state, country, region)
+    SELECT  DISTINCT city, state, country, region
+    FROM    air_quality_raw
     ON CONFLICT (city, state, country, region) DO NOTHING;
+    """
+    cms.execute_sql(conn_id,"aqi_datawarehouse",sql)
+
+def _create_dim_time():
+    print("🔰 Ingest dim location")
+    sql = """
+    INSERT  INTO dim_time (time_id, date, hour, day_of_week, month_name, quarter, week_of_year, is_weekend, is_holiday)
+    SELECT	DISTINCT 
+            DATE(timestamp) AS date
+            ,DATE_PART('hour', timestamp) AS hour
+            ,TO_CHAR(timestamp,	'Day') AS day_of_week
+            ,TO_CHAR(timestamp,	'Month') AS month_name
+            ,DATE_PART('quarter', timestamp) AS quarter
+            ,DATE_PART('week', timestamp) AS week_of_year
+            ,CASE WHEN DATE_PART('dow', timestamp) IN (0, 6) THEN true ELSE false END AS is_weekend
+            ,false AS is_holiday
+    FROM 	air_quality_raw
+    ON CONFLICT (time_id) DO NOTHING;
     """
     cms.execute_sql(conn_id,"aqi_datawarehouse",sql)
 
@@ -37,6 +55,11 @@ with DAG(
         python_callable=_create_dim_location,
     )
 
+    create_dim_time = PythonOperator(
+        task_id="create_dim_time",
+        python_callable=_create_dim_time,
+    )
+
     end = EmptyOperator(task_id="end")
 
-    start >> create_dim_location >> end
+    start >> create_dim_location >> create_dim_time >> end
