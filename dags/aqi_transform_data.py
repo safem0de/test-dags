@@ -72,7 +72,15 @@ def _create_fact_table():
         '-' AS weather_icon
     FROM dblink(
         '{dblink_conn_str}'::text,
-        'SELECT aqi_id, timestamp, city, state, country, region, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction FROM air_quality_raw'
+        $$
+        SELECT DISTINCT ON (timestamp, city, state, country, region)
+            aqi_id, timestamp, city, state, country, region,
+            aqius, mainus, aqicn, maincn,
+            temperature, pressure, humidity,
+            wind_speed, wind_direction
+        FROM air_quality_raw
+        ORDER BY timestamp, city, state, country, region, aqi_id DESC
+        $$
     ) AS raw(
         aqi_id BIGINT,
         timestamp TIMESTAMP,
