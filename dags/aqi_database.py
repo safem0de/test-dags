@@ -1,4 +1,4 @@
-import sys
+import os, sys, time
 sys.path.append('/opt/airflow/dags/latest/dags')
 
 from datetime import timedelta
