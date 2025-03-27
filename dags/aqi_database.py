@@ -1,9 +1,9 @@
 import os, sys, time
-sys.path.append('/opt/airflow/dags/latest/dags')
+sys.path.append('/opt/airflow/dags/latest/')
 
 from datetime import timedelta
-from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
-from dags.aqi_class.CommonServices import CommonServices
+from aqi_class.AirQualityDatabase import AirQualityDatabase
+from aqi_class.CommonServices import CommonServices
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
