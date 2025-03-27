@@ -6,24 +6,29 @@ from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
 from dags.aqi_class.ApiServices import ApiServices
 from dags.aqi_class.CommonServices import CommonServices
 from airflow import DAG
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils import timezone
 
 conn_id = "0_postgres_db"
+pg_hook = PostgresHook(postgres_conn_id=conn_id)
+conn = pg_hook.get_connection(conn_id)
+dblink_conn_str = f"host={conn.host} port={conn.port} dbname={conn.schema} user={conn.login} password={conn.password}"
 cms = CommonServices()
 
 def _create_dim_location():
     print("🔰 Ingest dim location")
-    sql = """
+    sql = f"""
     INSERT INTO dim_location (city, state, country, region)
     SELECT * FROM dblink(
-        'host=43.209.49.162 port=30432 dbname=aqi_database user=airflow password=airflow'::text,
+        '{dblink_conn_str}'::text,
         'SELECT DISTINCT city, state, country, region FROM air_quality_raw ORDER BY region, state, city'::text
     ) AS t(city TEXT, state TEXT, country TEXT, region TEXT)
     ON CONFLICT (city, state, country, region) DO NOTHING;
     """
+    print(sql)
     cms.execute_sql(conn_id,"aqi_datawarehouse",sql)
 
 def _create_dim_time():
