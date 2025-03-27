@@ -101,10 +101,11 @@ def _create_fact_table():
 
 with DAG(
     "airquality_transform_data",
-    schedule=None,
-    start_date=timezone.datetime(2025, 3, 20),
+    schedule_interval="30 0 * * *",  # ✅ รันทุกวันเวลา 00:30
+    start_date=timezone.datetime(2025, 3, 27),
     tags=["capstone","datawarehouse"]
-):
+    ):
+    
     start = EmptyOperator(task_id="start")
 
     create_dim_location = PythonOperator(
