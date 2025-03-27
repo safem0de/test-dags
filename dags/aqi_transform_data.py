@@ -55,6 +55,50 @@ def _create_dim_time():
     """
     cms.execute_sql(conn_id,"aqi_datawarehouse",sql)
 
+def _create_fact_table():
+    print("🔰 Ingest fact table")
+    sql = f"""
+    INSERT INTO fact_air_quality (fact_id, time_id, location_id,
+        aqius, mainus, aqicn, maincn, temperature, pressure, humidity,
+        wind_speed, wind_direction, weather_icon
+    )
+    SELECT
+        raw.aqi_id AS fact_id,
+        TO_CHAR(raw.timestamp, 'YYYYMMDDHH24')::BIGINT AS time_id,
+        loc.location_id AS location_id,
+        raw.aqius, raw.mainus, raw.aqicn, raw.maincn,
+        raw.temperature, raw.pressure, raw.humidity,
+        raw.wind_speed, raw.wind_direction,
+        NULL AS weather_icon
+    FROM dblink(
+        'host=43.209.49.162 port=30432 dbname=aqi_database user=airflow password=airflow'::text,
+        'SELECT aqi_id, timestamp, city, state, country, region, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction FROM air_quality_raw'
+    ) AS raw(
+        aqi_id BIGINT,
+        timestamp TIMESTAMP,
+        city TEXT,
+        state TEXT,
+        country TEXT,
+        region TEXT,
+        aqius INTEGER,
+        mainus TEXT,
+        aqicn INTEGER,
+        maincn TEXT,
+        temperature FLOAT,
+        pressure FLOAT,
+        humidity FLOAT,
+        wind_speed FLOAT,
+        wind_direction FLOAT
+    )
+    JOIN dim_location loc
+    ON raw.city = loc.city
+    AND raw.state = loc.state
+    AND raw.country = loc.country
+    AND raw.region = loc.region
+    ON CONFLICT (fact_id) DO NOTHING;
+    """
+    cms.execute_sql(conn_id,"aqi_datawarehouse",sql)
+
 with DAG(
     "airquality_transform_data",
     schedule=None,
@@ -73,6 +117,11 @@ with DAG(
         python_callable=_create_dim_time,
     )
 
+    create_fact_table = PythonOperator(
+        task_id="create_fact_table",
+        python_callable=_create_fact_table,
+    )
+
     end = EmptyOperator(task_id="end")
 
-    start >> create_dim_location >> create_dim_time >> end
+    start >> create_dim_location >> create_dim_time >> create_fact_table >> end
