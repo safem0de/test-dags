@@ -17,9 +17,11 @@ cms = CommonServices()
 def _create_dim_location():
     print("🔰 Ingest dim location")
     sql = """
-    INSERT  INTO dim_location (city, state, country, region)
-    SELECT  DISTINCT city, state, country, region
-    FROM    air_quality_raw
+    INSERT INTO dim_location (city, state, country, region)
+    SELECT * FROM dblink(
+        'host=43.209.49.162 port=30432 dbname=aqi_database user=airflow password=airflow'::text,
+        'SELECT DISTINCT city, state, country, region FROM air_quality_raw ORDER BY region, state, city'::text
+    ) AS t(city TEXT, state TEXT, country TEXT, region TEXT)
     ON CONFLICT (city, state, country, region) DO NOTHING;
     """
     cms.execute_sql(conn_id,"aqi_datawarehouse",sql)
