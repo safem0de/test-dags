@@ -69,7 +69,7 @@ def _create_fact_table():
         raw.aqius, raw.mainus, raw.aqicn, raw.maincn,
         raw.temperature, raw.pressure, raw.humidity,
         raw.wind_speed, raw.wind_direction,
-        NULL AS weather_icon
+        '-' AS weather_icon
     FROM dblink(
         'host=43.209.49.162 port=30432 dbname=aqi_database user=airflow password=airflow'::text,
         'SELECT aqi_id, timestamp, city, state, country, region, aqius, mainus, aqicn, maincn, temperature, pressure, humidity, wind_speed, wind_direction FROM air_quality_raw'
