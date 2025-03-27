@@ -17,6 +17,12 @@ test-dags/  <-- Root ของ Git repo
 kubectl cp --retries=3 apache-airflow-test/airflow-bb554d448-6xfr4:/opt/airflow/dags ./airflow-dags -c airflow-webserver --no-preserve
 ```
 
+### backup-file mode (skip some-pipeline)
+```bash
+cd dags
+cp 4bba3da14b62f5785e7118c66744a2a9bcba73bf/airflow-dags/* .   
+```
+
 ### ถ้ามีการ Import ข้อมูลใหม่
 ```bash
 SELECT setval(pg_get_serial_sequence('air_quality_raw', 'aqi_id'), (SELECT MAX(aqi_id) FROM air_quality_raw));
