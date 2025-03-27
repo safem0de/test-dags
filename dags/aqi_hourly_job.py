@@ -64,12 +64,13 @@ def _get_hourly_data():
 
 with DAG(
     "aqi_hourly_job",
-    schedule=None,
-    start_date=timezone.datetime(2025, 3, 8),
+    schedule_interval="@hourly",
+    start_date=timezone.datetime(2025, 3, 27),
     max_active_runs=1,  # ✅ จำกัดให้รันได้ครั้งละ 1 Task
-    concurrency=1,      # ✅ จำกัดให้มี 1 Task ที่รัน API พร้อมกัน
+    # concurrency=1,    # ✅ จำกัดให้มี 1 Task ที่รัน API พร้อมกัน
     tags=["capstone","database"]
-):
+    ):
+
     start = EmptyOperator(task_id="start")
 
     check_master_data = PythonOperator(
