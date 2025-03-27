@@ -32,19 +32,25 @@ def _create_dim_location():
     cms.execute_sql(conn_id,"aqi_datawarehouse",sql)
 
 def _create_dim_time():
-    print("🔰 Ingest dim location")
-    sql = """
-    INSERT  INTO dim_time (time_id, date, hour, day_of_week, month_name, quarter, week_of_year, is_weekend, is_holiday)
-    SELECT	DISTINCT 
-            DATE(timestamp) AS date
-            ,DATE_PART('hour', timestamp) AS hour
-            ,TO_CHAR(timestamp,	'Day') AS day_of_week
-            ,TO_CHAR(timestamp,	'Month') AS month_name
-            ,DATE_PART('quarter', timestamp) AS quarter
-            ,DATE_PART('week', timestamp) AS week_of_year
-            ,CASE WHEN DATE_PART('dow', timestamp) IN (0, 6) THEN true ELSE false END AS is_weekend
-            ,false AS is_holiday
-    FROM 	air_quality_raw
+    print("🔰 Ingest dim time")
+    sql = f"""
+    INSERT INTO dim_time (
+        time_id, date, hour, day_of_week, month_name, quarter,week_of_year, is_weekend, is_holiday
+    )
+    SELECT DISTINCT
+        TO_CHAR(timestamp, 'YYYYMMDDHH24')::BIGINT AS time_id,
+        DATE(timestamp) AS date,
+        DATE_PART('hour', timestamp) AS hour,
+        TO_CHAR(timestamp, 'Day') AS day_of_week,
+        TO_CHAR(timestamp, 'Month') AS month_name,
+        DATE_PART('quarter', timestamp) AS quarter,
+        DATE_PART('week', timestamp) AS week_of_year,
+        CASE WHEN DATE_PART('dow', timestamp) IN (0, 6) THEN true ELSE false END AS is_weekend,
+        false AS is_holiday
+    FROM dblink(
+        '{dblink_conn_str}'::text,
+        'SELECT timestamp FROM air_quality_raw'
+    ) AS t(timestamp TIMESTAMP)
     ON CONFLICT (time_id) DO NOTHING;
     """
     cms.execute_sql(conn_id,"aqi_datawarehouse",sql)
