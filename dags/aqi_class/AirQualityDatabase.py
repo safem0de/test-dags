@@ -2,8 +2,8 @@ import csv
 import datetime
 import json
 import os
-from aqi_class.ApiServices import ApiServices
-from aqi_class.CommonServices import CommonServices
+from dags.aqi_class.ApiServices import ApiServices
+from dags.aqi_class.CommonServices import CommonServices
 
 class AirQualityDatabase:
     """Class สำหรับจัดการ Database, API และการสร้างไฟล์ JSON"""

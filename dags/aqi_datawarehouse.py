@@ -1,6 +1,6 @@
 import os
-from aqi_class.AirQualityDatawarehouse import AirQualityDatawarehouse
-from aqi_class.CommonServices import CommonServices
+from dags.aqi_class.AirQualityDatawarehouse import AirQualityDatawarehouse
+from dags.aqi_class.CommonServices import CommonServices
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
