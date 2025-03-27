@@ -2,7 +2,7 @@ import csv
 import json
 import os
 
-from dags.aqi_class.CommonServices import CommonServices
+from aqi_class.CommonServices import CommonServices
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 class AirQualityDatawarehouse:

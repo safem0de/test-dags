@@ -2,9 +2,9 @@ import logging
 import os
 import pandas as pd
 import numpy as np
-from dags.aqi_class.AirQualityDatabase import AirQualityDatabase
-from dags.aqi_class.ApiServices import ApiServices
-from dags.aqi_class.CommonServices import CommonServices
+from aqi_class.AirQualityDatabase import AirQualityDatabase
+from aqi_class.ApiServices import ApiServices
+from aqi_class.CommonServices import CommonServices
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
