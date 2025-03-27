@@ -1,4 +1,4 @@
-import os, time
+import os, sys, time
 from datetime import timedelta
 from aqi_class.AirQualityDatabase import AirQualityDatabase
 from aqi_class.CommonServices import CommonServices
@@ -7,6 +7,9 @@ from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils import timezone
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'aqi_class'))
+
 
 # ตั้งค่าพารามิเตอร์
 conn_id = "0_postgres_db"
