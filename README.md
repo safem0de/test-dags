@@ -23,6 +23,12 @@ cd dags
 cp 4bba3da14b62f5785e7118c66744a2a9bcba73bf/airflow-dags/* .   
 ```
 
+### Add postgresql-client & test
+```bash
+sudo apt update && sudo apt install -y postgresql-client  # ติดตั้ง psql ถ้ายังไม่มี
+psql -h 43.209.49.162 -p 30376 -U airflow -d airflow
+```
+
 ### ถ้ามีการ Import ข้อมูลใหม่
 ```bash
 SELECT setval(pg_get_serial_sequence('air_quality_raw', 'aqi_id'), (SELECT MAX(aqi_id) FROM air_quality_raw));
