@@ -12,7 +12,7 @@ from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils import timezone
 
-conn_id = "0_postgres_db"
+conn_id = "1_postgres_db"
 pg_hook = PostgresHook(postgres_conn_id=conn_id)
 conn = pg_hook.get_connection(conn_id)
 dblink_conn_str = f"host={conn.host} port={conn.port} dbname={conn.schema} user={conn.login} password={conn.password}"
