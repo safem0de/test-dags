@@ -16,7 +16,11 @@ conn_id = "0_postgres_db"
 api_url = Variable.get("air_quality_url")
 api_key = Variable.get("air_quality_key_db")
 api_key2 = Variable.get("air_quality_key_dwh")
-api_keys = [api_key, api_key2]
+api_key3 = Variable.get("air_quality_key_dwh2")
+api_key4 = Variable.get("air_quality_key_dwh3")
+api_key5 = Variable.get("air_quality_key_dwh4")
+
+api_keys = [api_key, api_key2, api_key3, api_key4, api_key5]
 dag_file_path = "/opt/airflow/dags/"
 master_file = "transform_state_city_region.csv"
 
