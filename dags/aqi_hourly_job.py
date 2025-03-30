@@ -71,7 +71,7 @@ def _get_hourly_data():
 
 with DAG(
     "aqi_hourly_job",
-    schedule_interval="0 */2 * * *", #"@hourly",
+    schedule_interval="5 */2 * * *", #"@hourly",
     start_date=timezone.datetime(2025, 3, 27),
     max_active_runs=1,  # ✅ จำกัดให้รันได้ครั้งละ 1 Task
     # concurrency=1,    # ✅ จำกัดให้มี 1 Task ที่รัน API พร้อมกัน
