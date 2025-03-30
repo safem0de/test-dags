@@ -16,11 +16,14 @@ conn_id = "0_postgres_db"
 api_url = Variable.get("air_quality_url")
 api_key = Variable.get("air_quality_key_db")
 api_key2 = Variable.get("air_quality_key_dwh")
-api_key3 = Variable.get("air_quality_key_dwh2")
-api_key4 = Variable.get("air_quality_key_dwh3")
-api_key5 = Variable.get("air_quality_key_dwh4")
+api_key3 = Variable.get("air_quality_key_dwh1")
+api_key4 = Variable.get("air_quality_key_dwh2")
+api_key5 = Variable.get("air_quality_key_dwh3")
+api_key6 = Variable.get("air_quality_key_dwh4")
+api_key7 = Variable.get("air_quality_key_dwh5")
+api_key8 = Variable.get("air_quality_key_dwh6")
 
-api_keys = [api_key, api_key2, api_key3, api_key4, api_key5]
+api_keys = [api_key, api_key2, api_key3, api_key4, api_key5, api_key6, api_key7, api_key8]
 dag_file_path = "/opt/airflow/dags/"
 master_file = "transform_state_city_region.csv"
 
@@ -68,7 +71,7 @@ def _get_hourly_data():
 
 with DAG(
     "aqi_hourly_job",
-    schedule_interval="@hourly",
+    schedule_interval="0 */2 * * *", #"@hourly",
     start_date=timezone.datetime(2025, 3, 27),
     max_active_runs=1,  # ✅ จำกัดให้รันได้ครั้งละ 1 Task
     # concurrency=1,    # ✅ จำกัดให้มี 1 Task ที่รัน API พร้อมกัน
