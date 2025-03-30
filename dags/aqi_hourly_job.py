@@ -22,8 +22,9 @@ api_key5 = Variable.get("air_quality_key_dwh3")
 api_key6 = Variable.get("air_quality_key_dwh4")
 api_key7 = Variable.get("air_quality_key_dwh5")
 api_key8 = Variable.get("air_quality_key_dwh6")
+api_key9 = Variable.get("air_quality_key_dwh7")
 
-api_keys = [api_key, api_key2, api_key3, api_key4, api_key5, api_key6, api_key7, api_key8]
+api_keys = [api_key, api_key2, api_key3, api_key4, api_key5, api_key6, api_key7, api_key8, api_key9]
 dag_file_path = "/opt/airflow/dags/"
 master_file = "transform_state_city_region.csv"
 
